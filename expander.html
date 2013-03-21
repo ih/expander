@@ -3,30 +3,57 @@
 </head>
 
 <body>
-  <div class="expander-keys">{{> expander_keys}}</div>
-  <!-- TODO (irvin) temporary;  make expander key an url parameter -->
-  <div>{{> expander_selector}}</div>
-  <div>{{> expander_viewer}}</div>
+  {{> page}}
+  <div>
+    <h1>html test</h1>
+    <span>Training a <span><span>deep belief</span> network</span> can be done by incrementally creating stacks of <span>restricted <span><span>boltzman</span> <span>machines</span></span></span></span>
+  </div>
 </body>
 
+<template name="page">
+  {{> expanderKeys}}
+  <!-- TODO (irvin) temporary;  make expander key an url parameter -->
+  {{> expanderSelector}}
+  {{> expanderViewer}}
+  {{> expanderCreator fragmentData}}
+</template>
 
-<template name="expander_keys">
+
+<template name="expanderKeys">
+<div class="expander-keys">	
   Expander Keys:
   {{#each getAllExpanders}}
   <div>{{_id}}</div>
   {{/each}}
+</div>
 </template>
 
-<template name="expander_selector">
+<template name="expanderSelector">
+<div>
   <input></input>
   <button>Submit</button>
+</div>
 </template>
 
 <!-- TODO (irvin) pass argument to template instead of using "global" session variable? -->
-<template name="expander_viewer">
-  {{> expander selected_expander}}
+<template name="expanderViewer">
+  {{> expander selectedExpander}}
 </template>
 
 <template name="expander">
-  {{content}}
+<div class="expander">
+  <h1>View expander</h1>
+  <div class="rendered-content">{{{renderContent}}}</div>
+  <div class="plain-content">{{content}}</div>
+</div>
+</template>
+
+<template name="expanderCreator">
+	<h1>Create a new expander</h1>
+	<div class="fragment">{{fragment}}</div>
+        <label>
+          New Content
+          <textarea class="new-content"></textarea>
+        </label>
+        <button>Submit</button>
 </template>
