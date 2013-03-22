@@ -5,9 +5,21 @@ Expanders = new Meteor.Collection('expanders');
 Meteor.subscribe('expanders');
 */
 if (Meteor.is_client){
+    /*** HELPERS BEGIN ***/
+    Handlebars.registerHelper('hide', function (condition) {
+        return condition ? 'hide' : '';
+    });
+
+    Handlebars.registerHelper('show', function (condition) {
+        return condition ? '' : 'hide';
+    });
+    /*** HELPERS END ***/
+
+    Session.set('selectMode', false);
     Template.page.fragmentData = function () {
         return Session.get('fragmentData') || {};
     };
+
 
     Template.expanderKeys.getAllExpanders = function () {
         return Expanders.find();
@@ -26,12 +38,16 @@ if (Meteor.is_client){
 
     //***EXPANDER BEGIN***//
     Template.expander.events({
-        'mouseup .content': function (event, template) {
+        'mouseup .content' : function (event, template) {
             var selection = window.getSelection();
+            Session.set('selectMode', false);
             if(selection.length > 0) {
                 Session.set('showCreator', true);
                 Session.set('fragmentData', {selection: selection, parent: this});
             }
+        },
+        'mousedown .content' : function (event, template) {
+            Session.set('selectMode', true);
         }
     });
 
@@ -47,6 +63,12 @@ if (Meteor.is_client){
             return '';
         }
     };
+
+    Template.expander.selectMode = function () {
+        return Session.get('selectMode');
+    };
+
+
 
     function insertSpans (content, fragments) {
         function createSpanDictionary (fragments) {
@@ -73,6 +95,7 @@ if (Meteor.is_client){
     }
     //***EXPANDER END***//
 
+    //***CREATOR BEGIN ***//
     Template.expanderCreator.events({
         'click button': function (event, template) {
             var self = this;
@@ -87,5 +110,15 @@ if (Meteor.is_client){
             //var fragment
         }
     });
+
+    //***CREATOR END ***//
+
+    Template.expander.f = function(a) {
+        return a + 5;
+    };
+
+    Template.expander.g = function(b) {
+        return b + 7;
+    };
 }
 
