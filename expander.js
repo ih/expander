@@ -40,10 +40,13 @@ if (Meteor.is_client){
     Template.expander.events({
         'mouseup .content' : function (event, template) {
             var selection = window.getSelection();
+            var selectionString = selection.toString();
+            var border = { open : selection.baseOffset,
+                           close : selection.extentOffset };
             Session.set('selectMode', false);
-            if(selection.length > 0) {
+            if(selectionString.length > 0) {
                 Session.set('showCreator', true);
-                Session.set('fragmentData', {selection: selection, parent: this});
+                Session.set('fragmentData', {selectionString: selectionString, parent: this});
             }
         },
         'mousedown .content' : function (event, template) {
@@ -104,7 +107,7 @@ if (Meteor.is_client){
             newExpanderId = Expanders.insert({
                 parent: self.parent._id, 
                 content: newContent, 
-                parentFragment: self.selection
+                parentFragment: self.selectionString
             });
             //add fragment information to current expander
             //var fragment
