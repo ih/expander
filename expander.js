@@ -46,7 +46,8 @@ if (Meteor.is_client){
             Session.set('selectMode', false);
             if(selectionString.length > 0) {
                 Session.set('showCreator', true);
-                Session.set('fragmentData', {selectionString: selectionString, parent: this});
+                Session.set('fragmentData', {selectionString : selectionString, parent : this,
+                                             border : border});
             }
         },
         'mousedown .content' : function (event, template) {
@@ -104,24 +105,18 @@ if (Meteor.is_client){
             var self = this;
             var newContent = template.find('textarea').value;
             //create a new expander
-            newExpanderId = Expanders.insert({
-                parent: self.parent._id, 
-                content: newContent, 
-                parentFragment: self.selectionString
+            var newExpanderId = Expanders.insert({
+                parent : self.parent._id, 
+                content : newContent, 
+                parentFragment : self.selectionString,
+                fragments : []
             });
             //add fragment information to current expander
-            //var fragment
+            var fragment = {border : self.border, id : newExpanderId};
+            Expanders.update({_id : self.parent._id}, { $push: { fragments : fragment }});
         }
     });
 
     //***CREATOR END ***//
-
-    Template.expander.f = function(a) {
-        return a + 5;
-    };
-
-    Template.expander.g = function(b) {
-        return b + 7;
-    };
 }
 
