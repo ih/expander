@@ -52,6 +52,8 @@ if (Meteor.is_client){
         },
         'mousedown .content' : function (event, template) {
             Session.set('selectMode', true);
+        },
+        '' : function (event, template) {
         }
     });
 
@@ -61,7 +63,7 @@ if (Meteor.is_client){
         if (self.content) {
             //assume content is a linear indexable structure
             var renderedContent = insertSpans(self.content, self.fragments);
-            return '<b>'+renderedContent+'</b>';
+            return renderedContent;
         }
         else {
             return '';
@@ -76,10 +78,20 @@ if (Meteor.is_client){
 
     function insertSpans (content, fragments) {
         function createSpanDictionary (fragments) {
+            /*
+             A dictionary where the positions in the content and the values are spans
+             open spans should always come after closing spans when rendering
+             */
             var spanDictionary = {};
             _.each(fragments, function (fragment) {
-                spanDictionary[fragment.border.open] = '<span data-id="'+fragment.id+'">';
-                spanDictionary[fragment.border.close] = '</span>';
+                if (spanDictionary[fragment.border.open] === undefined) {
+                    spanDictionary[fragment.border.open] = {open : [], close : []};
+                }
+                if (spanDictionary[fragment.border.close] === undefined) {
+                    spanDictionary[fragment.border.close] = {open : [], close : []};
+                }
+                spanDictionary[fragment.border.open]['open'].push('<span data-id="'+fragment.id+'">');
+                spanDictionary[fragment.border.close]['close'].push('</span>');
             });
             return spanDictionary;
         }
@@ -87,16 +99,18 @@ if (Meteor.is_client){
         var spanDictionary = createSpanDictionary(fragments);
         var newContent = '';
         _.each(content, function (character, index) {
-            var span = spanDictionary[index];
-            if (span) {
-                newContent += span + character;
+            var spanList = spanDictionary[index];
+            if (spanList) {
+                _.each(spanList['close'].concat(spanList['open']), function(span) {
+                    newContent += span;
+                });
             }
-            else {
-                newContent += character;
-            }
+            newContent += character;
         });
         return newContent;
     }
+
+    
     //***EXPANDER END***//
 
     //***CREATOR BEGIN ***//
