@@ -53,7 +53,12 @@ if (Meteor.is_client){
         'mousedown .content' : function (event, template) {
             Session.set('selectMode', true);
         },
-        '' : function (event, template) {
+        'mousemove' : function (event, template) {
+            var caretPosition = document.caretRangeFromPoint(event.x, event.y).endOffset;
+            highlightFragment(caretPosition);
+        },
+        'click .highlight-all-fragments' : function (event, template) {
+            alert('hello');
         }
     });
 
@@ -74,6 +79,11 @@ if (Meteor.is_client){
         return Session.get('selectMode');
     };
 
+    function highlightFragment(caretPosition) {
+        /* Determines which fragments should (not) be highlighted based on mouse position
+         */
+
+    }
 
 
     function insertSpans (content, fragments) {
