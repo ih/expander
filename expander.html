@@ -6,7 +6,21 @@
   {{> page}}
   <div>
     <h1>html test</h1>
-    <span>Training a <span><span>deep belief</span> network</span> can be done by incrementally creating stacks of <span>restricted <span><span>boltzman</span> <span>machines</span></span></span></span>
+    <span>Training a 
+      <span>
+        <span>deep belief
+        </span> network
+      </span> 
+      can be done by incrementally creating stacks of 
+      <span>restricted 
+        <span>
+          <span>boltzman
+          </span> 
+          <span>machines
+          </span>
+        </span>
+      </span>
+    </span>
   </div>
 </body>
 
@@ -36,7 +50,8 @@
 </div>
 </template>
 
-<!-- TODO (irvin) pass argument to template instead of using "global" session variable? -->
+<!-- TODO (irvin) pass argument to template instead of using "global" 
+     session variable? -->
 <template name="expanderViewer">
   {{> expander selectedExpander}}
 </template>
@@ -45,14 +60,20 @@
 <div class="expander">
   <h1>View expander</h1>
   <div>parent: {{parent}}</div>
-  <button class="highlight-all-fragments">Highlight All Fragments</button>
-  <div class="content rendered  {{hide selectMode}}">{{{content}}}</div>
+  <button class="highlight-all-fragments">
+    Highlight All Fragments
+  </button>
+  <div class="content rendered  {{hide selectMode}}">
+    {{{renderContent}}}
+  </div>
   <div class="content plain {{show selectMode}}">{{content}}</div>
 </div>
 </template>
 
-<!-- preview possible expansions for the currently viewed expander based on where the mouse is hovering -->
+<!-- preview possible expansions for the currently viewed expander 
+     based on where the mouse is hovering -->
 <template name="fragmentsViewer">
+  <h2>Fragments Viewer</h2>
   hello
 </template>
 

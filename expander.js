@@ -46,7 +46,8 @@ if (Meteor.is_client){
             Session.set('selectMode', false);
             if(selectionString.length > 0) {
                 Session.set('showCreator', true);
-                Session.set('fragmentData', {selectionString : selectionString, parent : this,
+                Session.set('fragmentData', {selectionString : selectionString, 
+                                             parent : this,
                                              border : border});
             }
         },
@@ -54,7 +55,8 @@ if (Meteor.is_client){
             Session.set('selectMode', true);
         },
         'mousemove' : function (event, template) {
-            var caretPosition = document.caretRangeFromPoint(event.x, event.y).endOffset;
+            var caretPosition = 
+                    document.caretRangeFromPoint(event.x, event.y).endOffset;
             highlightFragment(caretPosition);
         },
         'click .highlight-all-fragments' : function (event, template) {
@@ -67,7 +69,8 @@ if (Meteor.is_client){
         
         if (self.content) {
             //assume content is a linear indexable structure
-            var renderedContent = insertSpans(self.content, self.fragments);
+            var renderedContent = insertFragmentMarkers(self.content, 
+                                                        self.fragments);
             return renderedContent;
         }
         else {
@@ -80,44 +83,37 @@ if (Meteor.is_client){
     };
 
     function highlightFragment(caretPosition) {
-        /* Determines which fragments should (not) be highlighted based on mouse position
+        /* Determines which fragments should (not) be highlighted based on mouse 
+         position
          */
 
     }
 
 
-    function insertSpans (content, fragments) {
-        function createSpanDictionary (fragments) {
-            /*
-             A dictionary where the positions in the content and the values are spans
-             open spans should always come after closing spans when rendering
-             */
-            var spanDictionary = {};
-            _.each(fragments, function (fragment) {
-                if (spanDictionary[fragment.border.open] === undefined) {
-                    spanDictionary[fragment.border.open] = {open : [], close : []};
-                }
-                if (spanDictionary[fragment.border.close] === undefined) {
-                    spanDictionary[fragment.border.close] = {open : [], close : []};
-                }
-                spanDictionary[fragment.border.open]['open'].push('<span data-id="'+fragment.id+'">');
-                spanDictionary[fragment.border.close]['close'].push('</span>');
-            });
-            return spanDictionary;
+    function insertFragmentMarkers (content, fragments) {
+        function createMarker (fragment, type) {
+            return '<span class="fragment-marker '+ type + ' ' + fragment.id 
+                + '"></span>';
+        }
+        
+        function insertMarker (marker, content, insertionPoint) {
+            return content.splice(insertionPoint, 0, marker);
         }
 
-        var spanDictionary = createSpanDictionary(fragments);
-        var newContent = '';
-        _.each(content, function (character, index) {
-            var spanList = spanDictionary[index];
-            if (spanList) {
-                _.each(spanList['close'].concat(spanList['open']), function(span) {
-                    newContent += span;
-                });
-            }
-            newContent += character;
+        var contentCopy = _.clone(content);
+        //create fragment markers for each fragment and insert them into
+        //the copy of content, which then gets returned
+        _.each(fragments, function (fragment) {
+            //for now only applies for text
+            var startMarker = createMarker(fragment, 'open');
+            contentCopy = 
+                insertMarker(startMarker, contentCopy, fragment.border.open);
+            var endMarker = createMarker(fragment, 'close');
+            contentCopy = 
+                insertMarker(endMarker, contentCopy, fragment.border.close);
         });
-        return newContent;
+
+        return contentCopy;
     }
 
     
@@ -137,10 +133,15 @@ if (Meteor.is_client){
             });
             //add fragment information to current expander
             var fragment = {border : self.border, id : newExpanderId};
-            Expanders.update({_id : self.parent._id}, { $push: { fragments : fragment }});
+            Expanders.update({_id : self.parent._id}, 
+                             { $push: { fragments : fragment }});
         }
     });
 
     //***CREATOR END ***//
 }
-
+//MOVE TO UTIL FILE
+//http://stackoverflow.com/questions/4313841/javascript-how-can-i-insert-a-string-at-a-specific-index
+String.prototype.splice = function( idx, rem, s ) {
+    return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
+};
