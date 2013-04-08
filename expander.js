@@ -107,8 +107,9 @@ if (Meteor.is_client){
                 colorMap[fragment.id] = newColor;
             }
             Session.set('colorMap', colorMap);
+            var marker = type === 'open' ? '[' : ']';
             return '<span class="hide fragment-marker '+ type + ' ' + fragment.id 
-                + '">|</span>';
+                + '">'+ marker +'</span>';
         }
         function createMarkerDictionary (fragments) {
             /*
