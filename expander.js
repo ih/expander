@@ -37,6 +37,8 @@ if (Meteor.is_client){
     };
 
     //***EXPANDER BEGIN***//
+    //used to store color for fragment markers
+    Session.set('colorMap', {});
     Template.expander.events({
         'mouseup .content' : function (event, template) {
             var selection = window.getSelection();
@@ -60,7 +62,14 @@ if (Meteor.is_client){
             highlightFragment(caretPosition);
         },
         'click .highlight-all-fragments' : function (event, template) {
-            alert('hello');
+            var self = this;
+            //go through all the fragments and create a color
+            //for any that have not been applied
+            $('.fragment-marker').toggle();
+            _.each(self.fragments, function(fragment) {
+                var colorMap = Session.get('colorMap');
+                $('.'+fragment.id).css('color', colorMap[fragment.id]);
+            });
         }
     });
 
@@ -92,8 +101,14 @@ if (Meteor.is_client){
 
     function insertFragmentMarkers (content, fragments) {
         function createMarker (fragment, type) {
-            return '<span class="fragment-marker '+ type + ' ' + fragment.id 
-                + '">'+type+'</span>';
+            var colorMap = Session.get('colorMap');
+            if (colorMap[fragment.id] === undefined) {
+                var newColor = randomColor();
+                colorMap[fragment.id] = newColor;
+            }
+            Session.set('colorMap', colorMap);
+            return '<span class="hide fragment-marker '+ type + ' ' + fragment.id 
+                + '">|</span>';
         }
         function createMarkerDictionary (fragments) {
             /*
@@ -136,6 +151,8 @@ if (Meteor.is_client){
             }
             newContent += character;
         });
+        //TODO(irvin) take care of the case for inserting markers after the last 
+        //character in content
         return newContent;
     }
 
@@ -168,3 +185,7 @@ if (Meteor.is_client){
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
+
+function randomColor() {
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
+}
