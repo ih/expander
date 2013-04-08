@@ -93,27 +93,50 @@ if (Meteor.is_client){
     function insertFragmentMarkers (content, fragments) {
         function createMarker (fragment, type) {
             return '<span class="fragment-marker '+ type + ' ' + fragment.id 
-                + '"></span>';
+                + '">'+type+'</span>';
         }
-        
-        function insertMarker (marker, content, insertionPoint) {
-            return content.splice(insertionPoint, 0, marker);
+        function createMarkerDictionary (fragments) {
+            /*
+             A dictionary where the positions in the content and the values are 
+             spans open spans should always come after closing spans when 
+             rendering.
+             */
+            var markerDictionary = {};
+            _.each(fragments, function (fragment) {
+                if (markerDictionary[fragment.border.open] === undefined) {
+                    markerDictionary[fragment.border.open] = {open : [], 
+                                                            close : []};
+                }
+                if (markerDictionary[fragment.border.close] === undefined) {
+                    markerDictionary[fragment.border.close] = {open : [],
+                                                               close : []};
+                }
+                var beginMarker = createMarker(fragment, 'open');
+                markerDictionary[fragment.border.open]['open'].push(beginMarker);
+                var endMarker = createMarker(fragment, 'close');
+                markerDictionary[fragment.border.close]['close'].push(endMarker);
+            });
+            return markerDictionary;
         }
 
-        var contentCopy = _.clone(content);
-        //create fragment markers for each fragment and insert them into
-        //the copy of content, which then gets returned
-        _.each(fragments, function (fragment) {
-            //for now only applies for text
-            var startMarker = createMarker(fragment, 'open');
-            contentCopy = 
-                insertMarker(startMarker, contentCopy, fragment.border.open);
-            var endMarker = createMarker(fragment, 'close');
-            contentCopy = 
-                insertMarker(endMarker, contentCopy, fragment.border.close);
+        var markerDictionary = createMarkerDictionary(fragments);
+        var newContent = '';
+        /*
+         Insert fragment markers by iterating over content instead of fragments
+         since adding markers will change the length of the new content and
+         make the fragment border information incorrect
+         */
+        _.each(content, function (character, index) {
+            var spanList = markerDictionary[index];
+            if (spanList) {
+                _.each(spanList['close'].concat(spanList['open']), 
+                       function(span) {
+                           newContent += span;
+                       });
+            }
+            newContent += character;
         });
-
-        return contentCopy;
+        return newContent;
     }
 
     
