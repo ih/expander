@@ -13,6 +13,26 @@ if (Meteor.is_client){
     Handlebars.registerHelper('show', function (condition) {
         return condition ? '' : 'hide';
     });
+
+    //convenience function for setting object values in the Session
+    //if this is slow then perhaps "flatten" objects when storing them in
+    //the Session
+    Session.setObjectValue = function (objectName, key, value) {
+        var sessionObject = Session.get(objectName);
+        sessionObject[key] = value;
+        Session.set(objectName, sessionObject);
+    };
+
+    Session.getObjectValue = function (objectName, key) {
+        try {
+            var sessionObject = Session.get(objectName);
+            return sessionObject[key];
+        }
+        catch (error) {
+            console.log('error getting object value in session returning empty');
+            return {};
+        }
+    };
     /*** HELPERS END ***/
 
     Session.set('selectMode', false);
@@ -36,9 +56,33 @@ if (Meteor.is_client){
         return Expanders.findOne(Session.get("selectedExpanderKey"));
     };
 
-    //***EXPANDER BEGIN***//
+    //***DISPLAY LOGIC BEGIN***//
+    /*
+     Display logic that crosses that may affect more than one template
+     */
     //used to store color for fragment markers
     Session.set('colorMap', {});
+    //used to determine whether a fragment is currently highlighted or not
+    Session.set('highlightStates', {});
+    function highlightFragments() {
+        //update display for fragments with highlight state true
+        var highlightStates = Session.get('highlightStates');
+        _.each(_.keys(highlightStates), function (fragmentId) {
+            var fragmentMarkerClass = '.fragment-marker.' + fragmentId;
+            if ( highlightStates[fragmentId] ) {
+                $(fragmentMarkerClass).show();
+            }
+            else {
+                $(fragmentMarkerClass).hide();
+            }
+        });
+    }
+
+    Deps.autorun(highlightFragments);
+    //***DISPLAY LOGIC END***//
+
+    //***EXPANDER BEGIN***//
+    
     Template.expander.events({
         'mouseup .content' : function (event, template) {
             var selection = window.getSelection();
@@ -65,13 +109,16 @@ if (Meteor.is_client){
             var self = this;
             //go through all the fragments and create a color
             //for any that have not been applied
-            $('.fragment-marker').toggle();
             _.each(self.fragments, function(fragment) {
+                var highlightState = Session.getObjectValue('highlightStates', fragment.id);
+                Session.setObjectValue('highlightStates', fragment.id, !highlightState);
+                //TODO(irvin) this seems like an odd place to set the css color
                 var colorMap = Session.get('colorMap');
                 $('.'+fragment.id).css('color', colorMap[fragment.id]);
             });
         }
     });
+    
 
     Template.expander.renderContent = function () {
         var self = this;
