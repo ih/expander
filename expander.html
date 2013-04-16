@@ -29,7 +29,7 @@
   <!-- TODO (irvin) temporary;  make expander key an url parameter -->
   {{> expanderSelector}}
   {{> expanderViewer}}
-  {{> fragmentsViewer}}
+  
   {{> expanderCreator fragmentData}}
 </template>
 
@@ -54,6 +54,7 @@
      session variable? -->
 <template name="expanderViewer">
   {{> expander selectedExpander}}
+  {{> fragmentsViewer selectedExpander}}
 </template>
 
 <template name="expander">
@@ -67,6 +68,8 @@
     {{{renderContent}}}
   </div>
   <div class="content plain {{show selectMode}}">{{content}}</div>
+
+  <div></div>
 </div>
 </template>
 
@@ -74,7 +77,11 @@
      based on where the mouse is hovering -->
 <template name="fragmentsViewer">
   <h2>Fragments Viewer</h2>
-  hello
+  {{#each getHighlightedExpanders}}
+  <!-- TODO change view expander and use it here-->
+  {{> expander }}
+  {{> fragmentsViewer }}
+  {{/each}}
 </template>
 
 <template name="expanderCreator">

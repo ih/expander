@@ -207,6 +207,28 @@ if (Meteor.is_client){
     
     //***EXPANDER END***//
 
+    //***FRAGMENTS VIEWER BEGIN***//
+    Template.fragmentsViewer.getHighlightedExpanders = function () {
+        var self = this;
+        try {
+            var highlightedFragments = _.filter(self.fragments, function (fragment) {
+                return Session.get('highlightStates')[fragment.id];
+            });
+            var fragmentIds = _.pluck(highlightedFragments, 'id');
+            var highlightedExpanders = _.map(fragmentIds, function(id) {
+                return Expanders.findOne(id);
+            });
+            return highlightedExpanders;
+            //see if there is a query/find that can take multiple ids
+            //return Expanders.find(fragmentIds);
+        }
+        catch (error) {
+            console.log('could not return fragments for selected expander');
+            return [];
+        }
+    };
+    //***FRAGMENTS VIEWER END***//
+
     //***CREATOR BEGIN ***//
     Template.expanderCreator.events({
         'click button': function (event, template) {
