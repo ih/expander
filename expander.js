@@ -116,6 +116,7 @@ if (Meteor.is_client){
                 var colorMap = Session.get('colorMap');
                 $('.'+fragment.id).css('color', colorMap[fragment.id]);
             });
+            event.stopImmediatePropagation();
         }
     });
     

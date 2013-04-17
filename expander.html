@@ -4,24 +4,6 @@
 
 <body>
   {{> page}}
-  <div>
-    <h1>html test</h1>
-    <span>Training a 
-      <span>
-        <span>deep belief
-        </span> network
-      </span> 
-      can be done by incrementally creating stacks of 
-      <span>restricted 
-        <span>
-          <span>boltzman
-          </span> 
-          <span>machines
-          </span>
-        </span>
-      </span>
-    </span>
-  </div>
 </body>
 
 <template name="page">
@@ -54,7 +36,6 @@
      session variable? -->
 <template name="expanderViewer">
   {{> expander selectedExpander}}
-  {{> fragmentsViewer selectedExpander}}
 </template>
 
 <template name="expander">
@@ -68,7 +49,15 @@
     {{{renderContent}}}
   </div>
   <div class="content plain {{show selectMode}}">{{content}}</div>
-
+  <div>
+    <h3>fragment keys</h3>
+    <ul>
+    {{#each fragments}}
+    <li>{{id}}</li>
+    {{/each}}
+    </ul>
+  </div>
+  {{> fragmentsViewer this}}
   <div></div>
 </div>
 </template>
@@ -80,7 +69,6 @@
   {{#each getHighlightedExpanders}}
   <!-- TODO change view expander and use it here-->
   {{> expander }}
-  {{> fragmentsViewer }}
   {{/each}}
 </template>
 
