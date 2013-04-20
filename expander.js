@@ -70,10 +70,10 @@ if (Meteor.is_client){
         _.each(_.keys(highlightStates), function (fragmentId) {
             var fragmentMarkerClass = '.fragment-marker.' + fragmentId;
             if ( highlightStates[fragmentId] ) {
-                $(fragmentMarkerClass).show();
+                $(fragmentMarkerClass).removeClass('hide');
             }
             else {
-                $(fragmentMarkerClass).hide();
+                $(fragmentMarkerClass).addClass('hide');
             }
         });
     }
@@ -113,8 +113,7 @@ if (Meteor.is_client){
                 var highlightState = Session.getObjectValue('highlightStates', fragment.id);
                 Session.setObjectValue('highlightStates', fragment.id, !highlightState);
                 //TODO(irvin) this seems like an odd place to set the css color
-                var colorMap = Session.get('colorMap');
-                $('.'+fragment.id).css('color', colorMap[fragment.id]);
+                
             });
             event.stopImmediatePropagation();
         }
@@ -139,6 +138,13 @@ if (Meteor.is_client){
         return Session.get('selectMode');
     };
 
+    Template.expander.rendered = function () {
+        var colorMap = Session.get('colorMap');
+        _.each(_.keys(colorMap), function(fragmentId) {
+            $('.'+fragmentId).css('color', colorMap[fragmentId]);            
+        });
+    };
+
     function highlightFragment(caretPosition) {
         /* Determines which fragments should (not) be highlighted based on mouse 
          position
@@ -150,13 +156,15 @@ if (Meteor.is_client){
     function insertFragmentMarkers (content, fragments) {
         function createMarker (fragment, type) {
             var colorMap = Session.get('colorMap');
+            var highlightStates = Session.get('highlightStates');
             if (colorMap[fragment.id] === undefined) {
                 var newColor = randomColor();
                 colorMap[fragment.id] = newColor;
             }
             Session.set('colorMap', colorMap);
             var marker = type === 'open' ? '[' : ']';
-            return '<span class="hide fragment-marker '+ type + ' ' + fragment.id 
+            var hidden = highlightStates[fragment.id] ? '' : 'hide';
+            return '<span class="'+hidden+' fragment-mar+ker '+ type + ' ' + fragment.id 
                 + '">'+ marker +'</span>';
         }
         function createMarkerDictionary (fragments) {

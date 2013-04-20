@@ -1,4 +1,0 @@
-* 2013-04-17
-Highlight all for the expander in a fragments list isn't working because the click event is probably getting triggered twice due to the recursive template.  Fixed by adding stopImmediatePropagation() ot the event handler.
-
-The brackets aren't showing up for the fragment expanders.  Probably something to do with selectMode.  Check it out for next time.

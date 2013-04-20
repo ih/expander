@@ -1,0 +1,12 @@
+* <2013-04-20 Sat 08:33>
+Modifying inserFragmentMarkers worked, but the color doesn't always show up.
+
+Fixed the color situation by having the colors get added every time the expander template is rendered by adding a rendered function to the template.
+* <2013-04-18 Thu 19:53>
+Seems like deps.autorun might be re-rendering the page, in which case insertFragmentMarkers would be rerun and the hide class is added back again even if highlightedState is set to true.
+
+Modify insertFragmentMarkers to only add hide class if highlightState is false
+* 2013-04-17
+Highlight all for the expander in a fragments list isn't working because the click event is probably getting triggered twice due to the recursive template.  Fixed by adding stopImmediatePropagation() ot the event handler.
+
+The brackets aren't showing up for the fragment expanders.  Probably something to do with selectMode.  Check it out for next time.
