@@ -66,12 +66,18 @@
      based on where the mouse is hovering -->
 <template name="fragmentsViewer">
   <h2>Fragments Viewer</h2>
-  {{#each getHighlightedExpanders}}
+  {{#each getHighlightedFragments}}
   <!-- TODO change view expander and use it here-->
-  <div class="fragment {{this._id}}">
-    {{> expander}}
-  </div>
+  {{> fragment this}}
   {{/each}}
+</template>
+
+<template name="fragment">
+<div class="fragment {{this.id}}">
+    open: {{this.border.open}}
+    close: {{this.border.close}}
+    {{> expander getExpander}}
+</div>
 </template>
 
 <template name="expanderCreator">

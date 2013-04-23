@@ -1,5 +1,13 @@
 * <2013-04-22 Mon 22:13>
 Made the borders of the fragments colored
+
+Make the fragment boundaries editable, for now have two text fields that can be adjusted
+
+Seems like it mike make sense for fragments viewer to iterate over fragments instead of expanders so we can have a fragment template that displays additional information (e.g. fragment marker location) that is fragment specific.
+
+Problem getting the expander corresponding to the fragment in the fragmentsViewer each loop, one "hack" would be to attach the correct expander to the fragment object in getHighlightedFragments...
+
+Solved passing the fragment into a fragment template then writing a getExpander function for that template that does not need a parameter
 * <2013-04-20 Sat 08:33>
 Modifying inserFragmentMarkers worked, but the color doesn't always show up.
 

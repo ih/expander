@@ -164,7 +164,7 @@ if (Meteor.is_client){
             Session.set('colorMap', colorMap);
             var marker = type === 'open' ? '[' : ']';
             var hidden = highlightStates[fragment.id] ? '' : 'hide';
-            return '<span class="'+hidden+' fragment-mar+ker '+ type + ' ' + fragment.id 
+            return '<span class="'+hidden+' fragment-marker '+ type + ' ' + fragment.id 
                 + '">'+ marker +'</span>';
         }
         function createMarkerDictionary (fragments) {
@@ -217,6 +217,23 @@ if (Meteor.is_client){
     //***EXPANDER END***//
 
     //***FRAGMENTS VIEWER BEGIN***//
+    Template.fragmentsViewer.getExpander = function (id) {
+        return Expanders.findOne(id);
+    };
+
+    Template.fragmentsViewer.getHighlightedFragments = function () {
+        var self = this;
+        try {
+            var highlightedFragments = _.filter(self.fragments, function (fragment) {
+                return Session.get('highlightStates')[fragment.id];
+            });
+            return highlightedFragments;
+        }
+        catch (error) {
+            console.log('could not return fragments for selected expander');
+            return [];
+        }
+    };
     Template.fragmentsViewer.getHighlightedExpanders = function () {
         var self = this;
         try {
@@ -244,7 +261,12 @@ if (Meteor.is_client){
         });
     };
     //***FRAGMENTS VIEWER END***//
-
+    //***FRAGMENT BEGIN***//
+    Template.fragment.getExpander = function() {
+        self = this;
+        return Expanders.findOne(self.id) || {};
+    };
+    //***FRAGMENT END***//
     //***CREATOR BEGIN ***//
     Template.expanderCreator.events({
         'click button': function (event, template) {
