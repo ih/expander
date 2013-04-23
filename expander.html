@@ -68,7 +68,9 @@
   <h2>Fragments Viewer</h2>
   {{#each getHighlightedExpanders}}
   <!-- TODO change view expander and use it here-->
-  {{> expander }}
+  <div class="fragment {{this._id}}">
+    {{> expander}}
+  </div>
   {{/each}}
 </template>
 

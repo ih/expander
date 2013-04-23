@@ -1,3 +1,5 @@
+* <2013-04-22 Mon 22:13>
+Made the borders of the fragments colored
 * <2013-04-20 Sat 08:33>
 Modifying inserFragmentMarkers worked, but the color doesn't always show up.
 

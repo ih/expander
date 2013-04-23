@@ -141,7 +141,7 @@ if (Meteor.is_client){
     Template.expander.rendered = function () {
         var colorMap = Session.get('colorMap');
         _.each(_.keys(colorMap), function(fragmentId) {
-            $('.'+fragmentId).css('color', colorMap[fragmentId]);            
+            $('span.'+fragmentId).css('color', colorMap[fragmentId]);            
         });
     };
 
@@ -235,6 +235,13 @@ if (Meteor.is_client){
             console.log('could not return fragments for selected expander');
             return [];
         }
+    };
+
+    Template.fragmentsViewer.rendered = function () {
+        var colorMap = Session.get('colorMap');
+        _.each(_.keys(colorMap), function(fragmentId) {
+            $('.fragment.'+fragmentId).css('border-color', colorMap[fragmentId]);
+        });
     };
     //***FRAGMENTS VIEWER END***//
 
