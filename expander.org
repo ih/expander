@@ -1,9 +1,17 @@
+* <2013-05-09 Thu 08:38>
+There doesn't seem to be two way binding for meteor to form inputs.  Here is a suggestion on how to do it https://groups.google.com/forum/?fromgroups=#!topic/meteor-talk/fpf2FAJdAZ4
+
+How do you access the element for an event (e.g. the input element where the change/keyup occurred)?  Would like to be able to pass which border to update based on a property of the html element rather than have two different events in the event map.
+
+You can use event.currentTarget where event is passed to the event handler in the event map.
+
+What goes into updating a border for a fragment?  Need to find the correct fragment in an expander and modify it's border value.  Should fragments be a separate collection?
 * <2013-04-22 Mon 22:13>
 Made the borders of the fragments colored
 
 Make the fragment boundaries editable, for now have two text fields that can be adjusted
 
-Seems like it mike make sense for fragments viewer to iterate over fragments instead of expanders so we can have a fragment template that displays additional information (e.g. fragment marker location) that is fragment specific.
+Seems like it might make sense for fragments viewer to iterate over fragments instead of expanders so we can have a fragment template that displays additional information (e.g. fragment marker location) that is fragment specific.
 
 Problem getting the expander corresponding to the fragment in the fragmentsViewer each loop, one "hack" would be to attach the correct expander to the fragment object in getHighlightedFragments...
 

@@ -74,8 +74,10 @@
 
 <template name="fragment">
 <div class="fragment {{this.id}}">
-    open: {{this.border.open}}
-    close: {{this.border.close}}
+    open: <input type="text" class="border-input open" 
+                 value="{{this.border.open}}" />
+    close: <input type="text" class="border-input close" 
+                  value="{{this.border.close}}" />
     {{> expander getExpander}}
 </div>
 </template>

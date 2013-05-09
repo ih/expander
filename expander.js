@@ -266,6 +266,24 @@ if (Meteor.is_client){
         self = this;
         return Expanders.findOne(self.id) || {};
     };
+
+    Template.fragment.events({
+        'change, keyup, blur .border': function(event) {
+            //TODO move this to utility library
+            function updateFragmentBorder(expanderId, borderType) {
+                
+            }
+            self = this;
+            var expanderId = self.id;
+            //TODO(irvin) better way to determine whether open/close border?
+            if(_.contains(event.currentTarget.classList, 'open')) {
+                updateFragmentBorder(self.id, 'open');
+            }
+            else {
+                updateFragmentBorder(self.id, 'close');
+            }
+        }
+    });
     //***FRAGMENT END***//
     //***CREATOR BEGIN ***//
     Template.expanderCreator.events({
