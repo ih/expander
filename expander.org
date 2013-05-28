@@ -1,3 +1,7 @@
+* <2013-05-27 Mon 23:27>
+Started going trhough discover meteor and refactoring based on it.
+
+Currently on routing chapter and will try to make viewing expanders based on url possible 
 * <2013-05-10 Fri 21:00>
 Using update with $set moderator to replace the entire fragment list with every change to a border, should probably find a more efficient way to do this.
 

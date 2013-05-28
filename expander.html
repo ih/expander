@@ -1,8 +1,11 @@
+<template name="welcome">
+  <h1>Welcome!</h1>
+</template>
 <template name="expanderKeys">
 <div class="expander-keys">
   Expander Keys:
   {{#each getAllExpanders}}
-  <div>{{_id}}</div>
+  <div><a href="{{expanderViewerPath this}}">{{_id}}</a></div>
   {{/each}}
 </div>
 </template>
