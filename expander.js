@@ -1,9 +1,5 @@
-//TODO (irvin) why is expanders already taken?
-Expanders = new Meteor.Collection('expanders');
 
-/* uncomment when autopublish package removed
-Meteor.subscribe('expanders');
-*/
+
 if (Meteor.is_client){
     /*** HELPERS BEGIN ***/
     Handlebars.registerHelper('hide', function (condition) {
@@ -12,6 +8,11 @@ if (Meteor.is_client){
 
     Handlebars.registerHelper('show', function (condition) {
         return condition ? '' : 'hide';
+    });
+
+    // TODO is there a way to access Session variables directly in the template?
+    Handlebars.registerHelper ('getSelectedFragmentData',  function () {
+	return Session.get('fragmentData') ||  {};
     });
 
     //convenience function for setting object values in the Session
@@ -36,10 +37,6 @@ if (Meteor.is_client){
     /*** HELPERS END ***/
 
     Session.set('selectMode', false);
-    Template.page.fragmentData = function () {
-        return Session.get('fragmentData') || {};
-    };
-
 
     Template.expanderKeys.getAllExpanders = function () {
         return Expanders.find();
@@ -82,7 +79,7 @@ if (Meteor.is_client){
     //***DISPLAY LOGIC END***//
 
     //***EXPANDER BEGIN***//
-    
+
     Template.expander.events({
         'mouseup .content' : function (event, template) {
             var selection = window.getSelection();
@@ -92,7 +89,7 @@ if (Meteor.is_client){
             Session.set('selectMode', false);
             if(selectionString.length > 0) {
                 Session.set('showCreator', true);
-                Session.set('fragmentData', {selectionString : selectionString, 
+                Session.set('fragmentData', {selectionString : selectionString,
                                              parent : this,
                                              border : border});
             }
@@ -101,7 +98,7 @@ if (Meteor.is_client){
             Session.set('selectMode', true);
         },
         'mousemove' : function (event, template) {
-            var caretPosition = 
+            var caretPosition =
                     document.caretRangeFromPoint(event.x, event.y).endOffset;
             highlightFragment(caretPosition);
         },
@@ -113,19 +110,19 @@ if (Meteor.is_client){
                 var highlightState = Session.getObjectValue('highlightStates', fragment.id);
                 Session.setObjectValue('highlightStates', fragment.id, !highlightState);
                 //TODO(irvin) this seems like an odd place to set the css color
-                
+
             });
             event.stopImmediatePropagation();
         }
     });
-    
+
 
     Template.expander.renderContent = function () {
         var self = this;
-        
+
         if (self.content) {
             //assume content is a linear indexable structure
-            var renderedContent = insertFragmentMarkers(self.content, 
+            var renderedContent = insertFragmentMarkers(self.content,
                                                         self.fragments);
             return renderedContent;
         }
@@ -141,12 +138,12 @@ if (Meteor.is_client){
     Template.expander.rendered = function () {
         var colorMap = Session.get('colorMap');
         _.each(_.keys(colorMap), function(fragmentId) {
-            $('span.'+fragmentId).css('color', colorMap[fragmentId]);            
+            $('span.'+fragmentId).css('color', colorMap[fragmentId]);
         });
     };
 
     function highlightFragment(caretPosition) {
-        /* Determines which fragments should (not) be highlighted based on mouse 
+        /* Determines which fragments should (not) be highlighted based on mouse
          position
          */
 
@@ -164,19 +161,19 @@ if (Meteor.is_client){
             Session.set('colorMap', colorMap);
             var marker = type === 'open' ? '[' : ']';
             var hidden = highlightStates[fragment.id] ? '' : 'hide';
-            return '<span class="'+hidden+' fragment-marker '+ type + ' ' + fragment.id 
+            return '<span class="'+hidden+' fragment-marker '+ type + ' ' + fragment.id
                 + '">'+ marker +'</span>';
         }
         function createMarkerDictionary (fragments) {
             /*
-             A dictionary where the positions in the content and the values are 
-             spans open spans should always come after closing spans when 
+             A dictionary where the positions in the content and the values are
+             spans open spans should always come after closing spans when
              rendering.
              */
             var markerDictionary = {};
             _.each(fragments, function (fragment) {
                 if (markerDictionary[fragment.border.open] === undefined) {
-                    markerDictionary[fragment.border.open] = {open : [], 
+                    markerDictionary[fragment.border.open] = {open : [],
                                                             close : []};
                 }
                 if (markerDictionary[fragment.border.close] === undefined) {
@@ -201,19 +198,19 @@ if (Meteor.is_client){
         _.each(content, function (character, index) {
             var spanList = markerDictionary[index];
             if (spanList) {
-                _.each(spanList['close'].concat(spanList['open']), 
+                _.each(spanList['close'].concat(spanList['open']),
                        function(span) {
                            newContent += span;
                        });
             }
             newContent += character;
         });
-        //TODO(irvin) take care of the case for inserting markers after the last 
+        //TODO(irvin) take care of the case for inserting markers after the last
         //character in content
         return newContent;
     }
 
-    
+
     //***EXPANDER END***//
 
     //***FRAGMENTS VIEWER BEGIN***//
@@ -270,17 +267,28 @@ if (Meteor.is_client){
     Template.fragment.events({
         'change, keyup, blur .border': function(event) {
             //TODO move this to utility library
-            function updateFragmentBorder(expanderId, borderType) {
-                
+             function updateFragmentBorder(parentExpander, expanderId,
+                                           borderType, newValue) {
+                //modify the border of the fragment in question
+                _.each(parentExpander.fragments, function (fragment) {
+                    if(expanderId === self.id) {
+                        fragment.border[borderType] = Number(newValue);
+                    }
+                });
+                Expanders.update(parentExpander._id,
+                                 {$set: {fragments: expander.fragments}});
             }
             self = this;
             var expanderId = self.id;
             //TODO(irvin) better way to determine whether open/close border?
+            var newValue = $(event.currentTarget).val();
+            var expander = Expanders.findOne(self.id);
+            var parentExpander = Expanders.findOne(expander.parent);
             if(_.contains(event.currentTarget.classList, 'open')) {
-                updateFragmentBorder(self.id, 'open');
+                updateFragmentBorder(parentExpander, self.id, 'open', newValue);
             }
             else {
-                updateFragmentBorder(self.id, 'close');
+                updateFragmentBorder(parentExpander, self.id, 'close', newValue);
             }
         }
     });
@@ -292,14 +300,15 @@ if (Meteor.is_client){
             var newContent = template.find('textarea').value;
             //create a new expander
             var newExpanderId = Expanders.insert({
-                parent : self.parent._id, 
-                content : newContent, 
+                //TODO rename parentId
+                parent : self.parent._id,
+                content : newContent,
                 parentFragment : self.selectionString,
                 fragments : []
             });
             //add fragment information to current expander
             var fragment = {border : self.border, id : newExpanderId};
-            Expanders.update({_id : self.parent._id}, 
+            Expanders.update({_id : self.parent._id},
                              { $push: { fragments : fragment }});
         }
     });

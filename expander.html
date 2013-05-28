@@ -1,23 +1,5 @@
-<head>
-  <title>Expander</title>
-</head>
-
-<body>
-  {{> page}}
-</body>
-
-<template name="page">
-  {{> expanderKeys}}
-  <!-- TODO (irvin) temporary;  make expander key an url parameter -->
-  {{> expanderSelector}}
-  {{> expanderViewer}}
-  
-  {{> expanderCreator fragmentData}}
-</template>
-
-
 <template name="expanderKeys">
-<div class="expander-keys">	
+<div class="expander-keys">
   Expander Keys:
   {{#each getAllExpanders}}
   <div>{{_id}}</div>
@@ -32,7 +14,7 @@
 </div>
 </template>
 
-<!-- TODO (irvin) pass argument to template instead of using "global" 
+<!-- TODO (irvin) pass argument to template instead of using "global"
      session variable? -->
 <template name="expanderViewer">
   {{> expander selectedExpander}}
@@ -62,7 +44,7 @@
 </div>
 </template>
 
-<!-- preview possible expansions for the currently viewed expander 
+<!-- preview possible expansions for the currently viewed expander
      based on where the mouse is hovering -->
 <template name="fragmentsViewer">
   <h2>Fragments Viewer</h2>
@@ -74,9 +56,9 @@
 
 <template name="fragment">
 <div class="fragment {{this.id}}">
-    open: <input type="text" class="border-input open" 
+    open: <input type="text" class="border-input open"
                  value="{{this.border.open}}" />
-    close: <input type="text" class="border-input close" 
+    close: <input type="text" class="border-input close"
                   value="{{this.border.close}}" />
     {{> expander getExpander}}
 </div>
@@ -86,7 +68,7 @@
 	<h1>Create a new expander</h1>
 	<div class="fragment">{{selectionString}}</div>
         <div>border: ({{border.open}}, {{border.close}})</div>
-        
+
         <label>
           New Content
           <textarea class="new-content"></textarea>
