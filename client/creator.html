@@ -1,11 +1,13 @@
 <template name="expanderCreator">
-	<h1>Create a new expander</h1>
-	<div class="fragment">{{selectionString}}</div>
-        <div>border: ({{border.open}}, {{border.close}})</div>
+  <h1>Create a new expander</h1>
+  <form>
+    <div class="fragment">{{selectionString}}</div>
+    <div>border: ({{border.open}}, {{border.close}})</div>
 
-        <label>
-          New Content
-          <textarea class="new-content"></textarea>
-        </label>
-        <button>Submit</button>
+    <label>
+      New Content
+      <textarea class="new-content"></textarea>
+    </label>
+    <input type="submit" value="Submit"/>
+  </form>
 </template>

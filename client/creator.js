@@ -1,5 +1,6 @@
 Template.expanderCreator.events({
-    'click button': function (event, template) {
+    'submit form': function (event, template) {
+	event.preventDefault ();
         var self = this;
         var newContent = template.find('textarea').value;
         //create a new expander
