@@ -293,27 +293,6 @@ if (Meteor.is_client){
         }
     });
     //***FRAGMENT END***//
-    //***CREATOR BEGIN ***//
-    Template.expanderCreator.events({
-        'click button': function (event, template) {
-            var self = this;
-            var newContent = template.find('textarea').value;
-            //create a new expander
-            var newExpanderId = Expanders.insert({
-                //TODO rename parentId
-                parent : self.parent._id,
-                content : newContent,
-                parentFragment : self.selectionString,
-                fragments : []
-            });
-            //add fragment information to current expander
-            var fragment = {border : self.border, id : newExpanderId};
-            Expanders.update({_id : self.parent._id},
-                             { $push: { fragments : fragment }});
-        }
-    });
-
-    //***CREATOR END ***//
 }
 //MOVE TO UTIL FILE
 //http://stackoverflow.com/questions/4313841/javascript-how-can-i-insert-a-string-at-a-specific-index

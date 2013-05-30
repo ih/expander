@@ -1,7 +1,7 @@
 Meteor.Router.add ({
-    '/':  'welcome', 
+    '/':  'welcome',
     '/expanders/:_id':  {
-	to:  'expanderViewer', 
+	to:  'expanderViewer',
 	    // TODO rename key to id
 	and:  function (id) { Session.set ('selectedExpanderKey',  id); }
     }
