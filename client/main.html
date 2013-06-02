@@ -6,8 +6,9 @@
   {{loginButtons}}
   {{> expanderKeys}}
   {{renderPage}}
-
+  {{#if currentUser}}
   {{> expanderCreator getSelectedFragmentData}}
+  {{/if}}
 </body>
 
 
