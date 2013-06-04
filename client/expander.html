@@ -5,6 +5,12 @@
   <button class="highlight-all-fragments">
     Highlight All Fragments
   </button>
+	<!--TODO move edit controls into own template?-->
+	<div class="edit-controls">
+		<button class="edit {{hide editMode}}">Edit</button>
+		<button class="save {{show editMode}}">Save</button>
+		<button class="cancel {{show editMode}}">Cancel</button>
+	</div>
   <div class="content rendered  {{hide selectMode}}">
     {{{renderContent}}}
   </div>

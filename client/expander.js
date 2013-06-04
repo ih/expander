@@ -33,6 +33,10 @@ Template.expander.events({
 
         });
         event.stopImmediatePropagation();
+    },
+    'click .edit' : function (event, template) {
+	var self = this;
+	Session.set ('editingExpanderId', this._id);
     }
 });
 
@@ -53,6 +57,12 @@ Template.expander.renderContent = function () {
 
 Template.expander.selectMode = function () {
     return Session.get('selectMode');
+};
+
+Template.expander.editMode = function () {
+	/*determine whether this expander is the one being edited*/
+    var self = this;
+    return Session.get ('editingExpanderId') === self._id;
 };
 
 Template.expander.rendered = function () {
