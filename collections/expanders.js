@@ -2,6 +2,7 @@
 Expanders = new Meteor.Collection('expanders');
 
 Meteor.methods ({
+	// TODO could add check on content size
     createExpander:  function (dataFromClient) {
 	var user = Meteor.user ();
 	if (!user) {
