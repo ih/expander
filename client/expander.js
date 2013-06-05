@@ -36,7 +36,17 @@ Template.expander.events({
     },
     'click .edit' : function (event, template) {
 	var self = this;
+	    // clear the fragmentData so we know if it is present it is 
+	    // intended for this edit, probably want to hide creator too
+	Session.set ('fragmentData', undefined);
 	Session.set ('editingExpanderId', this._id);
+    },
+    'click .save' : function (event, template) {
+	Meteor.call ('updateExpander', {});
+	Session.set ('editingExpanderId', undefined);
+    },
+    'click .cancel' : function (event, template) {
+	Session.set ('editingExpanderId', undefined);
     }
 });
 

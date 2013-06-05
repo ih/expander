@@ -1,29 +1,33 @@
 <template name="expander">
-<div class="expander">
-  <h1>View expander</h1>
-  <div>parent: {{parent}}</div>
-  <button class="highlight-all-fragments">
-    Highlight All Fragments
-  </button>
-	<!--TODO move edit controls into own template?-->
-	<div class="edit-controls">
-		<button class="edit {{hide editMode}}">Edit</button>
-		<button class="save {{show editMode}}">Save</button>
-		<button class="cancel {{show editMode}}">Cancel</button>
+	<div class="expander">
+		<h1>View expander</h1>
+		<div>parent: {{parent}}</div>
+		<button class="highlight-all-fragments">
+			Highlight All Fragments
+		</button>
+		<!--TODO make edit/view-mode separate templates?-->
+		<div class="edit-mode {{show editMode}}">
+			<button class="save">Save</button>
+			<button class="cancel">Cancel</button>
+			<textarea class="plain">{{content}}</textarea>
+		</div>
+		<div class="view-mode {{hide editMode}}">
+			<button class="edit {{hide editMode}}">Edit</button>
+			<div class="content rendered  {{hide selectMode}}">
+				{{{renderContent}}}
+			</div>
+			<div class="content plain {{show selectMode}}">{{content}}</div>
+			<div>
+				<h3>fragment keys</h3>
+				<ul>
+					{{#each fragments}}
+					<li>{{id}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div>
+				{{> fragmentsViewer this}}
+			</div>
+		</div>
 	</div>
-  <div class="content rendered  {{hide selectMode}}">
-    {{{renderContent}}}
-  </div>
-  <div class="content plain {{show selectMode}}">{{content}}</div>
-  <div>
-    <h3>fragment keys</h3>
-    <ul>
-    {{#each fragments}}
-    <li>{{id}}</li>
-    {{/each}}
-    </ul>
-  </div>
-  {{> fragmentsViewer this}}
-  <div></div>
-</div>
 </template>
