@@ -1,7 +1,7 @@
 <template name="expander">
 	<div class="expander">
 		<h1>View expander</h1>
-		<div>parent: {{parent}}</div>
+		<div>parent: <a href="/expanders/{{parent}}">{{parent}}</a></div>
 		<button class="highlight-all-fragments">
 			Highlight All Fragments
 		</button>
@@ -9,7 +9,7 @@
 		<div class="edit-mode {{show editMode}}">
 			<button class="save">Save</button>
 			<button class="cancel">Cancel</button>
-			<textarea class="plain">{{content}}</textarea>
+			<textarea class="plain content-input">{{content}}</textarea>
 		</div>
 		<div class="view-mode {{hide editMode}}">
 			<button class="edit {{hide editMode}}">Edit</button>

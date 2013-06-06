@@ -42,7 +42,12 @@ Template.expander.events({
 	Session.set ('editingExpanderId', this._id);
     },
     'click .save' : function (event, template) {
-	Meteor.call ('updateExpander', {});
+	var expanderData = template.data;
+	expanderData.content = template.find ('textarea').value;
+	Meteor.call ('updateExpander', {
+	    udpatedExpander: expanderData,
+	    fragmentData: Session.get ('fragmentData')
+	});
 	Session.set ('editingExpanderId', undefined);
     },
     'click .cancel' : function (event, template) {

@@ -1,8 +1,11 @@
 // declared without var so accessible outside this file
 Expanders = new Meteor.Collection('expanders');
 
+var ownsDocument = function(userId, doc) {
+  return doc && doc.userId === userId;
+};
+
 Expanders.allow ({
-    update: ownsDocument,
     remove: ownsDocument
 });
 
@@ -11,7 +14,8 @@ Meteor.methods ({
     createExpander:  function (dataFromClient) {
 	var user = Meteor.user ();
 	if (!user) {
-	    throw new Meteor.Error (401, 'You need to log in to create a new expander');
+	    throw new Meteor.Error (401, 'You need to log in to create a new' + 
+				    'expander');
 	}
 	    // pick out the whitelisted keys
 	    // TODO rename parent to parentId
@@ -30,6 +34,27 @@ Meteor.methods ({
 	Expanders.update (expanderData.parent, {$push: {fragments: fragment}});
     },
     updateExpander: function (dataFromClient) {
-	
+	    // this expanderData has updated content
+	var udpatedExpander = dataFromClient.updatedExpander;
+	    // if there is fragmentData then we need to adjust the connections
+	    // to other expanders
+	if (dataFromClient.fragmentData !== undefined) {
+	    function removeAsFragment (updatedExpander) {
+		if (udpatedExpander.parent !== undefined) {
+		// remove the expander corresponding to expanderId from its
+		// parent fragments 
+
+		// remove information about the parent from the expander
+
+		}
+	    }
+
+
+	    removeAsFragment (expanderData);
+	    addAsFragment (dataFromClient.expanderId, dataFromClient.fragmentData);
+	    addFragmentData (dataFromClient.expanderData);
+	}
+	Expanders.update (dataFromClient.expanderId, 
+			  {$set: dataFromClient.expanderData});
     }
 });
