@@ -1,3 +1,5 @@
+* <2013-06-06 Thu 23:15>
+Implemented helper functions for updating an expander (including the connection to other expanders).  Need to step-through and test that it works
 * <2013-06-04 Tue 09:38>
 Editing will work by having an edit button on the expander template, when it is clicked the content etc turn into text fields and editing the border will be done via the selection mechanism. The event for handling selection mouseup .content will do something different if an expander is being edited, e.g. hide the expander creator.
 * <2013-05-27 Mon 23:27>

@@ -2,7 +2,7 @@ Template.expander.events({
     'mouseup .content' : function (event, template) {
         var selection = window.getSelection();
         var selectionString = selection.toString();
-	// TODO order these so open is always the smaller one (can be 
+	// TODO order these so open is always the smaller one (can be
 	// reversed if selected from left to right)
         var border = { open : selection.baseOffset,
                        close : selection.extentOffset };
@@ -27,8 +27,10 @@ Template.expander.events({
         //go through all the fragments and create a color
         //for any that have not been applied
         _.each(self.fragments, function(fragment) {
-            var highlightState = Session.getObjectValue('highlightStates', fragment.id);
-            Session.setObjectValue('highlightStates', fragment.id, !highlightState);
+            var highlightState = Session.getObjectValue('highlightStates',
+							fragment.id);
+            Session.setObjectValue('highlightStates', fragment.id,
+				   !highlightState);
             //TODO(irvin) this seems like an odd place to set the css color
 
         });
@@ -36,12 +38,14 @@ Template.expander.events({
     },
     'click .edit' : function (event, template) {
 	var self = this;
-	    // clear the fragmentData so we know if it is present it is 
+	    // clear the fragmentData so we know if it is present it is
 	    // intended for this edit, probably want to hide creator too
 	Session.set ('fragmentData', undefined);
 	Session.set ('editingExpanderId', this._id);
     },
     'click .save' : function (event, template) {
+	    // TODO try to intelligently modify the fragments of the
+	    // updated expander when content is edited
 	var expanderData = template.data;
 	expanderData.content = template.find ('textarea').value;
 	Meteor.call ('updateExpander', {
@@ -106,8 +110,8 @@ function insertFragmentMarkers (content, fragments) {
         Session.set('colorMap', colorMap);
         var marker = type === 'open' ? '[' : ']';
         var hidden = highlightStates[fragment.id] ? '' : 'hide';
-        return '<span class="'+hidden+' fragment-marker '+ type + ' ' + fragment.id
-            + '">'+ marker +'</span>';
+        return '<span class="'+hidden+' fragment-marker '+ type + ' ' + 
+	    fragment.id + '">'+ marker +'</span>';
     }
     function createMarkerDictionary (fragments) {
         /*
@@ -154,6 +158,3 @@ function insertFragmentMarkers (content, fragments) {
     //character in content
     return newContent;
 }
-
-
-

@@ -35,24 +35,41 @@ Meteor.methods ({
     },
     updateExpander: function (dataFromClient) {
 	    // this expanderData has updated content
-	var udpatedExpander = dataFromClient.updatedExpander;
+	var updatedExpander = dataFromClient.updatedExpander;
+
+	function removeAsFragment (updatedExpander) {
+	    if (updatedExpander.parent !== undefined) {
+		// remove the expander corresponding to expanderId from its
+		// parent fragments 
+		var parentExpander = Expanders.findOne (updatedExpander.parent);
+		function sameId (fragment) {
+		    return fragment.id === updatedExpander._id;
+		};
+		parentExpander.fragments = _.reject (parentExpander, sameId);
+		Expanders.update (parentExpander._id, {$set: parentExpander});
+		// remove information about the parent from the expander
+		updatedExpander.parentFragment = undefined;
+	    }
+	}
+
+	function addAsFragment (updatedExpander, fragmentData) {
+		// create a fragment and add it to the new parent's fragment 
+		// list
+	    var newFragment = {
+		border: fragmentData.border, 
+		id: updatedExpander._id
+	    };
+	    Expanders.update (fragmentData.parent._id, 
+			      {$push: {fragments: newFragment}});
+		// update the parentFragment field in the expander
+	    updatedExpander.parentFragment = fragmentData.selectionString;
+	}
+
 	    // if there is fragmentData then we need to adjust the connections
 	    // to other expanders
 	if (dataFromClient.fragmentData !== undefined) {
-	    function removeAsFragment (updatedExpander) {
-		if (udpatedExpander.parent !== undefined) {
-		// remove the expander corresponding to expanderId from its
-		// parent fragments 
-
-		// remove information about the parent from the expander
-
-		}
-	    }
-
-
-	    removeAsFragment (expanderData);
-	    addAsFragment (dataFromClient.expanderId, dataFromClient.fragmentData);
-	    addFragmentData (dataFromClient.expanderData);
+	    removeAsFragment (updatedExpander);
+	    addAsFragment (updatedExpander, dataFromClient.fragmentData);
 	}
 	Expanders.update (dataFromClient.expanderId, 
 			  {$set: dataFromClient.expanderData});
