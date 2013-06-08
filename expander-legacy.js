@@ -115,13 +115,15 @@ if (Meteor.is_client){
             //TODO(irvin) better way to determine whether open/close border?
             var newValue = $(event.currentTarget).val();
             var expander = Expanders.findOne(self.id);
-            var parentExpander = Expanders.findOne(expander.parent);
-            if(_.contains(event.currentTarget.classList, 'open')) {
-                updateFragmentBorder(parentExpander, self.id, 'open', newValue);
-            }
-            else {
-                updateFragmentBorder(parentExpander, self.id, 'close', newValue);
-            }
+	    if (expander &&  expander.parent) {
+		var parentExpander = Expanders.findOne(expander.parent);
+		if(_.contains(event.currentTarget.classList, 'open')) {
+                    updateFragmentBorder(parentExpander, self.id, 'open', newValue);
+		}
+		else {
+                    updateFragmentBorder(parentExpander, self.id, 'close', newValue);
+		}
+	    }
         }
     });
     //***FRAGMENT END***//

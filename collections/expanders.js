@@ -6,6 +6,7 @@ var ownsDocument = function(userId, doc) {
 };
 
 Expanders.allow ({
+    update: ownsDocument,
     remove: ownsDocument
 });
 
@@ -45,8 +46,11 @@ Meteor.methods ({
 		function sameId (fragment) {
 		    return fragment.id === updatedExpander._id;
 		};
-		parentExpander.fragments = _.reject (parentExpander, sameId);
-		Expanders.update (parentExpander._id, {$set: parentExpander});
+		parentExpander.fragments = _.reject (
+		    parentExpander.fragments, sameId);
+		    // can't update _id so pick out the fields that actally need 
+		    // updating
+		Expanders.update (parentExpander._id, {$set: _.omit (parentExpander, '_id')});
 		// remove information about the parent from the expander
 		updatedExpander.parentFragment = undefined;
 	    }
@@ -71,7 +75,7 @@ Meteor.methods ({
 	    removeAsFragment (updatedExpander);
 	    addAsFragment (updatedExpander, dataFromClient.fragmentData);
 	}
-	Expanders.update (dataFromClient.expanderId, 
-			  {$set: dataFromClient.expanderData});
+	Expanders.update (updatedExpander._id, 
+			  {$set: _.omit (updatedExpander, '_id')});
     }
 });

@@ -49,10 +49,11 @@ Template.expander.events({
 	var expanderData = template.data;
 	expanderData.content = template.find ('textarea').value;
 	Meteor.call ('updateExpander', {
-	    udpatedExpander: expanderData,
+	    updatedExpander: expanderData,
 	    fragmentData: Session.get ('fragmentData')
 	});
 	Session.set ('editingExpanderId', undefined);
+	event.stopImmediatePropagation();
     },
     'click .cancel' : function (event, template) {
 	Session.set ('editingExpanderId', undefined);
