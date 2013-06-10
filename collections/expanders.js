@@ -30,9 +30,12 @@ Meteor.methods ({
 	};
 	_.extend (expanderData, additionalExpanderData);
 	var newExpanderId = Expanders.insert (expanderData);
-	var fragment = dataFromClient.fragment;
-	fragment.id = newExpanderId;
-	Expanders.update (expanderData.parent, {$push: {fragments: fragment}});
+	if (dataFromClient.fragment) {
+	    var fragment = dataFromClient.fragment;
+	    fragment.id = newExpanderId;
+	    Expanders.update (expanderData.parent, 
+			      {$push: {fragments: fragment}});
+	}
     },
     updateExpander: function (dataFromClient) {
 	    // this expanderData has updated content
