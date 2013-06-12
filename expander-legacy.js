@@ -8,6 +8,10 @@ if (Meteor.is_client){
         return Expanders.find();
     };
 
+	Template.expanderKeys.getTopExpanders = function () {
+		return Expanders.find ({parent: undefined});
+	};
+
     Template.expanderSelector.events({
         'click button': function (event, template) {
             var expanderKey =  template.find('input').value;

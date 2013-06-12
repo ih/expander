@@ -53,7 +53,8 @@ Meteor.methods ({
 		    parentExpander.fragments, sameId);
 		    // can't update _id so pick out the fields that actally need 
 		    // updating
-		Expanders.update (parentExpander._id, {$set: _.omit (parentExpander, '_id')});
+		Expanders.update (parentExpander._id, 
+				  {$set: _.omit (parentExpander, '_id')});
 		// remove information about the parent from the expander
 		updatedExpander.parentFragment = undefined;
 	    }
