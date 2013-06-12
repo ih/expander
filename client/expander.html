@@ -1,6 +1,6 @@
 <template name="expander">
 	<div class="expander">
-		<h1>View expander</h1>
+		<h3>Viewer</h3>
 		<div>parent: <a href="/expanders/{{parent}}">{{parent}}</a></div>
 		<button class="highlight-all-fragments">
 			Highlight All Fragments
@@ -24,10 +24,9 @@
 				<pre>{{content}}</pre>
 			</div>
 			<div>
-				<h3>fragment keys</h3>
 				<ul>
 					{{#each fragments}}
-					<li>{{id}}</li>
+					<li><a href="/expanders/{{id}}">{{id}}</a></li>
 					{{/each}}
 				</ul>
 			</div>
