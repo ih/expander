@@ -24,18 +24,36 @@ Template.expander.events({
     },
     'click .highlight-all-fragments' : function (event, template) {
         var self = this;
-        //go through all the fragments and create a color
-        //for any that have not been applied
         _.each(self.fragments, function(fragment) {
-            var highlightState = Session.getObjectValue('highlightStates',
-							fragment.id);
             Session.setObjectValue('highlightStates', fragment.id,
-				   !highlightState);
-            //TODO(irvin) this seems like an odd place to set the css color
-
+				   true);
         });
         event.stopImmediatePropagation();
     },
+	'click .clear-all-highlights': function (event, template) {
+        var self = this;
+        _.each(self.fragments, function(fragment) {
+            Session.setObjectValue('highlightStates', fragment.id,
+				   false);
+        });
+
+		event.stopImmediatePropagation();
+	},
+	'click .highlight-selected' : function (event, template) {
+		var self = this;
+		_.each (self.fragments, function (fragment) {
+				//TODO move to utilities?
+			function isIntersecting(border1, border2) {
+				return border1.open < border2.close &&  
+					border1.close > border2.open;
+			}
+			if (isIntersecting (fragment.border, 
+								Session.get ('fragmentData').border)) {
+				Session.setObjectValue ('highlightStates', fragment.id, true);
+			}
+		});
+		event.stopImmediatePropagation ();
+	},
     'click .edit' : function (event, template) {
 	var self = this;
 	    // clear the fragmentData so we know if it is present it is
