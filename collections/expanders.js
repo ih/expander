@@ -21,7 +21,7 @@ Meteor.methods ({
 	    // pick out the whitelisted keys
 	    // TODO rename parent to parentId
 	var expanderData = _.pick (dataFromClient.newExpanderData,
-				   'parent', 'content', 'parentFragment');
+				   'parent', 'content', 'parentFragment', 'title');
 	    // add additional data to the new expander
 	var additionalExpanderData = {
 	    creatorId: user._id,

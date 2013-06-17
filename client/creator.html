@@ -1,8 +1,10 @@
 <template name="expanderCreator">
   <form>
-    <div class="fragment">{{selectionString}}</div>
     <div>border: ({{border.open}}, {{border.close}})</div>
-
+		<div>
+			Title
+			<input class="title-input" type="text" value="{{selectionString}}"></input>
+		</div>
     <label>
       New Content
       <textarea class="new-content"></textarea>

@@ -7,6 +7,7 @@ Template.expanderCreator.events({
 	var fragment = undefined;
 	var newExpanderData = {
 	    parent: undefined,
+		title: template.find ('.title-input').value,
 	    content: template.find('textarea').value,
 	    parentFragment: undefined
 	};
