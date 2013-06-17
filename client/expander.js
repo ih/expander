@@ -163,17 +163,19 @@ function insertFragmentMarkers (content, fragments) {
      since adding markers will change the length of the new content and
      make the fragment border information incorrect
      */
-    _.each(content, function (character, index) {
-        var spanList = markerDictionary[index];
+	for (var index = 0; index <= content.length; index ++ ) {
+		var character = content[index];
+		var spanList = markerDictionary[index];
         if (spanList) {
             _.each(spanList['close'].concat(spanList['open']),
                    function(span) {
                        newContent += span;
                    });
         }
-        newContent += character;
-    });
-    //TODO(irvin) take care of the case for inserting markers after the last
-    //character in content
+		// don't try to add any characters after content is over
+		if (index < content.length) {
+			newContent += character;
+		}
+	}
     return newContent;
 }
