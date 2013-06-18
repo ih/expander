@@ -1,7 +1,14 @@
 <template name="expander">
 	<div class="expander">
+		{{#if editMode}}
+		<h3><input type="text" class="title-input" value="{{title}}"></h3>
+		{{else}}
 		<h3>{{title}}</h3>
-		<div>parent: <a href="/expanders/{{parent}}">{{parent}}</a></div>
+		{{/if}}
+
+		{{#if parent}}
+		<div>parent: <a href="/expanders/{{parent}}">{{getTitle parent}}</a></div>
+		{{/if}}
 		<button class="highlight-all-fragments">
 			Highlight All Fragments
 		</button>
@@ -33,7 +40,7 @@
 			<div>
 				<ul>
 					{{#each fragments}}
-					<li><a href="/expanders/{{id}}">{{id}}</a></li>
+					<li><a href="/expanders/{{id}}">{{getTitle id}}</a></li>
 					{{/each}}
 				</ul>
 			</div>

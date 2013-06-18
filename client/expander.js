@@ -2,8 +2,8 @@ Template.expander.events({
     'mouseup .content' : function (event, template) {
         var selection = window.getSelection();
         var selectionString = selection.toString();
-	// TODO order these so open is always the smaller one (can be
-	// reversed if selected from left to right)
+		// TODO order these so open is always the smaller one (can be
+		// reversed if selected from left to right)
         var border = { open : selection.baseOffset,
                        close : selection.extentOffset };
         Session.set('selectMode', false);
@@ -26,7 +26,7 @@ Template.expander.events({
         var self = this;
         _.each(self.fragments, function(fragment) {
             Session.setObjectValue('highlightStates', fragment.id,
-				   true);
+								   true);
         });
         event.stopImmediatePropagation();
     },
@@ -34,7 +34,7 @@ Template.expander.events({
         var self = this;
         _.each(self.fragments, function(fragment) {
             Session.setObjectValue('highlightStates', fragment.id,
-				   false);
+								   false);
         });
 
 		event.stopImmediatePropagation();
@@ -42,7 +42,7 @@ Template.expander.events({
 	'click .highlight-selected' : function (event, template) {
 		var self = this;
 		_.each (self.fragments, function (fragment) {
-				//TODO move to utilities?
+			//TODO move to utilities?
 			function isIntersecting(border1, border2) {
 				return border1.open < border2.close &&  
 					border1.close > border2.open;
@@ -55,26 +55,27 @@ Template.expander.events({
 		event.stopImmediatePropagation ();
 	},
     'click .edit' : function (event, template) {
-	var self = this;
+		var self = this;
 	    // clear the fragmentData so we know if it is present it is
 	    // intended for this edit, probably want to hide creator too
-	Session.set ('fragmentData', undefined);
-	Session.set ('editingExpanderId', this._id);
+		Session.set ('fragmentData', undefined);
+		Session.set ('editingExpanderId', this._id);
     },
     'click .save' : function (event, template) {
 	    // TODO try to intelligently modify the fragments of the
 	    // updated expander when content is edited
-	var expanderData = template.data;
-	expanderData.content = template.find ('textarea').value;
-	Meteor.call ('updateExpander', {
-	    updatedExpander: expanderData,
-	    fragmentData: Session.get ('fragmentData')
-	});
-	Session.set ('editingExpanderId', undefined);
-	event.stopImmediatePropagation();
+		var expanderData = template.data;
+		expanderData.title = template.find('.title-input').value;
+		expanderData.content = template.find ('textarea').value;
+		Meteor.call ('updateExpander', {
+			updatedExpander: expanderData,
+			fragmentData: Session.get ('fragmentData')
+		});
+		Session.set ('editingExpanderId', undefined);
+		event.stopImmediatePropagation();
     },
     'click .cancel' : function (event, template) {
-	Session.set ('editingExpanderId', undefined);
+		Session.set ('editingExpanderId', undefined);
     }
 });
 
@@ -130,7 +131,7 @@ function insertFragmentMarkers (content, fragments) {
         var marker = type === 'open' ? '[' : ']';
         var hidden = highlightStates[fragment.id] ? '' : 'hide';
         return '<span class="'+hidden+' fragment-marker '+ type + ' ' + 
-	    fragment.id + '">'+ marker +'</span>';
+			fragment.id + '">'+ marker +'</span>';
     }
     function createMarkerDictionary (fragments) {
         /*
