@@ -91,8 +91,10 @@ Meteor.methods ({
 			// TODO is there a way to do this without getting the parent first?
 			Expanders.update (parentId, {$pull: {fragments: targetFragment}});
 		}
-		removeFromParentFragments (dataFromClient.parentId,
-								   dataFromClient.expanderId);
+		if (dataFromClient.parentId) {
+ 			removeFromParentFragments (dataFromClient.parentId,
+									   dataFromClient.expanderId);
+		}
 		Expanders.remove (dataFromClient.expanderId);
 	}
 });
