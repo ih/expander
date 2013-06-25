@@ -20,9 +20,11 @@
 		</button>
 
 		<!--TODO make edit/view-mode separate templates?-->
+		<!--TODO use if helper rather than applying a class -->
 		<div class="edit-mode {{show editMode}}">
 			<button class="save">Save</button>
 			<button class="cancel">Cancel</button>
+			<button class="delete">Delete</button>
 			<textarea class="plain content-input">{{content}}</textarea>
 		</div>
 		<div class="view-mode {{hide editMode}}">

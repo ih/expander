@@ -76,7 +76,15 @@ Template.expander.events({
     },
     'click .cancel' : function (event, template) {
 		Session.set ('editingExpanderId', undefined);
-    }
+    },
+	'click .delete' : function (event, template) {
+		event.preventDefault ();
+		if (confirm ("Delete expander?")) {
+			Meteor.call ('deleteExpander', 
+						 {expanderId: this._id, parentId: this.parent});
+		}
+		event.stopImmediatePropagation ();
+	}
 });
 
 
