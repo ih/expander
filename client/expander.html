@@ -32,12 +32,12 @@
 			<div class="content rendered  {{hide selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
-				<pre>{{{renderContent}}}</pre>
+				{{#markdown}}{{{renderContent}}}{{/markdown}}
 			</div>
 			<div class="content plain {{show selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
-				<pre>{{content}}</pre>
+				{{#markdown}}{{content}}{{/markdown}}
 			</div>
 			<div>
 				<ul>
