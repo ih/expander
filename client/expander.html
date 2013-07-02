@@ -32,12 +32,14 @@
 			<div class="content rendered  {{hide selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
-				{{#markdown}}{{{renderContent}}}{{/markdown}}
+				<!-- using pre for now instead of markdown for now since markdown adds p tags which
+					can throw off the point coordinate-->
+				<pre>{{{renderContent}}}</pre>
 			</div>
 			<div class="content plain {{show selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
-				{{#markdown}}{{content}}{{/markdown}}
+				<pre>{{content}}</pre>
 			</div>
 			<div>
 				<ul>
