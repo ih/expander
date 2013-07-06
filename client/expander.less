@@ -1,3 +1,6 @@
+.content {
+    padding: 20px;
+}
 .expander {
     font-size: large;
     line-height: 1.4;
@@ -19,4 +22,24 @@ span:hover {
 pre {
     font-family: georgia;
     white-space: pre-wrap;
+}
+
+.view-pane {
+    float: left;
+    width: 50%;
+}
+
+.control-pane {
+    float: left;
+    float: 50%;
+}
+
+/* giving the content a width  since panes are floated
+why does putting an element after that clears give
+the previous element a width?
+*/
+.content:after {
+    content: "";
+    display: block;
+    clear: both;
 }
