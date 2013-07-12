@@ -59,7 +59,11 @@ Template.expander.events({
 	    // clear the fragmentData so we know if it is present it is
 	    // intended for this edit, probably want to hide creator too
 		Session.set ('fragmentData', undefined);
-		Session.set ('editingExpanderId', this._id);
+			// Session.set ('editingExpanderId', this._id);
+
+		// make a deep copy of the expander and put it in the session
+		var expanderCopy = $.extend (true, {}, self);
+		Session.set ('editingExpander', expanderCopy);
     },
     'click .save' : function (event, template) {
 	    // TODO try to intelligently modify the fragments of the
@@ -71,11 +75,11 @@ Template.expander.events({
 			updatedExpander: expanderData,
 			fragmentData: Session.get ('fragmentData')
 		});
-		Session.set ('editingExpanderId', undefined);
+		Session.set ('editingExpander', undefined);
 		event.stopImmediatePropagation();
     },
     'click .cancel' : function (event, template) {
-		Session.set ('editingExpanderId', undefined);
+		Session.set ('editingExpander', undefined);
     },
 	'click .delete' : function (event, template) {
 		event.preventDefault ();
@@ -89,12 +93,16 @@ Template.expander.events({
 
 
 Template.expander.renderContent = function () {
-    var self = this;
+	var renderingExpander = this;
+	if (Template.expander.editMode ()) {
+		renderingExpander = Session.get ('editingExpander');
+		
+	}
 
-    if (self.content) {
+    if (renderingExpander.content) {
         //assume content is a linear indexable structure
-        var renderedContent = insertFragmentMarkers(self.content,
-                                                    self.fragments);
+        var renderedContent = insertFragmentMarkers(renderingExpander.content,
+                                                    renderingExpander.fragments);
         return renderedContent;
     }
     else {
@@ -109,7 +117,12 @@ Template.expander.selectMode = function () {
 Template.expander.editMode = function () {
 	/*determine whether this expander is the one being edited*/
     var self = this;
-    return Session.get ('editingExpanderId') === self._id;
+	if (Session.get ('editingExpander')) {
+		return Session.get ('editingExpander')._id === self._id;
+	}
+	else {
+		return false;
+	}
 };
 
 Template.expander.rendered = function () {
