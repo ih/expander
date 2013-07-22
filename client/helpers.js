@@ -21,6 +21,10 @@ Handlebars.registerHelper ('getSelectedFragmentData',  function () {
     return Session.get('fragmentData') ||  {};
 });
 
+Handlebars.registerHelper('isEditMode', function() {
+	return Session.get('editingExpander');
+});
+
 //convenience function for setting object values in the Session
 //if this is slow then perhaps "flatten" objects when storing them in
 //the Session

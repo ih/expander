@@ -14,7 +14,9 @@
 			{{> expanderKeys}}
 			{{#if currentUser}}
 			{{> expanderCreator getSelectedFragmentData}}
+			{{#if isEditMode}}
 			{{> expanderEditor}}
+			{{/if}}
 			{{/if}}
 			<div>
 	</div>

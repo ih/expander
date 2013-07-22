@@ -1,3 +1,10 @@
+var highlightAllFragments = function (expander) {
+	_.each(expander.fragments, function(fragment) {
+        Session.setObjectValue('highlightStates', fragment.id,
+							   true);
+    });
+};
+
 Template.expander.events({
     'mouseup .content' : function (event, template) {
         var selection = window.getSelection();
@@ -24,10 +31,7 @@ Template.expander.events({
     },
     'click .highlight-all-fragments' : function (event, template) {
         var self = this;
-        _.each(self.fragments, function(fragment) {
-            Session.setObjectValue('highlightStates', fragment.id,
-								   true);
-        });
+        highlightAllFragments (self);
         event.stopImmediatePropagation();
     },
 	'click .clear-all-highlights': function (event, template) {
@@ -64,6 +68,7 @@ Template.expander.events({
 		// make a deep copy of the expander and put it in the session
 		var expanderCopy = $.extend (true, {}, self);
 		Session.set ('editingExpander', expanderCopy);
+		highlightAllFragments (expanderCopy);
     },
     'click .save' : function (event, template) {
 	    // TODO try to intelligently modify the fragments of the
@@ -94,9 +99,11 @@ Template.expander.events({
 
 Template.expander.renderContent = function () {
 	var renderingExpander = this;
-	if (Template.expander.editMode ()) {
+		// this editMode is incorrect
+	var editingExpander = Session.get ('editingExpander');
+	if (editingExpander && editingExpander._id === renderingExpander._id) {
 		renderingExpander = Session.get ('editingExpander');
-		
+
 	}
 
     if (renderingExpander.content) {
