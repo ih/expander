@@ -1,12 +1,5 @@
 Template.expanderEditor.helpers ({
 	editingExpander: function () {
-		// if (Session.get ('editingExpander')) {
-		// 		// return Expanders.findOne (Session.get ('editingExpander')._id);
-
-		// }
-		// else {
-		// 	return undefined;
-		// }
 		return Session.get('editingExpander');
 	}
 });
