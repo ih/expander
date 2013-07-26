@@ -41,6 +41,14 @@ Template.expanderEditor.events({
 				adjustFragmentBoundaries(lengthDelta, caretPosition, self);
 		Session.setObjectValue('editingExpander', 'fragments', newFragments);
 		Session.setObjectValue('editingExpander', 'content', newContent);
+	},
+	'click .submit': function(event, template) {
+		Meteor.call('updateExpander', {
+			updatedExpander: Session.get('editingExpander'),
+			// TODO remove when fragments are adjusted in the new way
+			fragmentsData:  Session.get('fragmentsData')
+		});
+		Session.set ('editingExpander', undefined);
 	}
 });
 

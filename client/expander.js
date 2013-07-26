@@ -48,10 +48,10 @@ Template.expander.events({
 		_.each (self.fragments, function (fragment) {
 			//TODO move to utilities?
 			function isIntersecting(border1, border2) {
-				return border1.open < border2.close &&  
+				return border1.open < border2.close &&
 					border1.close > border2.open;
 			}
-			if (isIntersecting (fragment.border, 
+			if (isIntersecting (fragment.border,
 								Session.get ('fragmentData').border)) {
 				Session.setObjectValue ('highlightStates', fragment.id, true);
 			}
@@ -89,7 +89,7 @@ Template.expander.events({
 	'click .delete' : function (event, template) {
 		event.preventDefault ();
 		if (confirm ("Delete expander?")) {
-			Meteor.call ('deleteExpander', 
+			Meteor.call ('deleteExpander',
 						 {expanderId: this._id, parentId: this.parent});
 		}
 		event.stopImmediatePropagation ();
@@ -158,7 +158,7 @@ function insertFragmentMarkers (content, fragments) {
         Session.set('colorMap', colorMap);
         var marker = type === 'open' ? '[' : ']';
         var hidden = highlightStates[fragment.id] ? '' : 'hide';
-        return '<span class="'+hidden+' fragment-marker '+ type + ' ' + 
+        return '<span class="'+hidden+' fragment-marker '+ type + ' ' +
 			fragment.id + '">'+ marker +'</span>';
     }
     function createMarkerDictionary (fragments) {
