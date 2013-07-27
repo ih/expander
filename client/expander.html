@@ -7,7 +7,7 @@
 		{{/if}}
 
 		{{#if parent}}
-		<div>parent: <a href="/expanders/{{parent}}">{{getTitle parent}}</a></div>
+		<div>parent: <a href="/expanders/{{parent}}">{{getParentFragment _id}}</a></div>
 		{{/if}}
 		<button class="highlight-all-fragments">
 			Highlight All Fragments
@@ -47,7 +47,7 @@
 			<div>
 				<ul>
 					{{#each fragments}}
-					<li><a href="/expanders/{{id}}">{{getTitle id}}</a></li>
+					<li><a href="/expanders/{{id}}">{{getParentFragment id}}</a></li>
 					{{/each}}
 				</ul>
 			</div>

@@ -16,6 +16,17 @@ Handlebars.registerHelper ('getTitle', function (expanderId) {
 	}
 });
 
+Handlebars.registerHelper('getParentFragment', function(expanderId) {
+	try {
+		return Expanders.findOne(expanderId).parentFragment;
+	} catch(exception) {
+		// TODO factor out exception code
+		console.warn (exception.name + ':' + exception.message + 
+					  'for expander ' + expanderId);
+		return '';
+	}
+});
+
 // TODO is there a way to access Session variables directly in the template?
 Handlebars.registerHelper ('getSelectedFragmentData',  function () {
     return Session.get('fragmentData') ||  {};
