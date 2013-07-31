@@ -54,7 +54,21 @@ Template.expanderEditor.events({
 	},
     'click .cancel' : function (event, template) {
 		Session.set ('editingExpander', undefined);
-    }
+    },
+	'click .delete' : function (event, template) {
+		event.preventDefault();
+		var editingExpander = Session.get('editingExpander');
+		if (confirm ("Delete expander?")) {
+			Meteor.call (
+				'deleteExpander',
+				{
+					expanderId: editingExpander._id,
+					parentId: editingExpander.parent
+				});
+			Session.set('editingExpander', undefined);
+		}
+		event.stopImmediatePropagation ();
+	}
 });
 
 
