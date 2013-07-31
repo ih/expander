@@ -13,9 +13,10 @@
 		<div class="control-pane">
 			{{> expanderKeys}}
 			{{#if currentUser}}
-			{{> expanderCreator getSelectedFragmentData}}
 			{{#if isEditMode}}
 			{{> expanderEditor}}
+			{{else}}
+			{{> expanderCreator getSelectedFragmentData}}
 			{{/if}}
 			{{/if}}
 			<div>

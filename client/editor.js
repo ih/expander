@@ -5,6 +5,8 @@ var adjustFragmentBoundaries =
 			// only need to adjust fragments after the point of edit
 			if(fragment.border.open > caretPosition) {
 				fragment.border.open += lengthDelta;
+			}
+			if(fragment.border.close > caretPosition) {
 				fragment.border.close += lengthDelta;
 			}
 		});
@@ -49,7 +51,10 @@ Template.expanderEditor.events({
 			fragmentsData:  Session.get('fragmentsData')
 		});
 		Session.set ('editingExpander', undefined);
-	}
+	},
+    'click .cancel' : function (event, template) {
+		Session.set ('editingExpander', undefined);
+    }
 });
 
 
