@@ -48,7 +48,7 @@ Template.expanderEditor.events({
 		Meteor.call('updateExpander', {
 			updatedExpander: Session.get('editingExpander'),
 			// TODO remove when fragments are adjusted in the new way
-			fragmentsData:  Session.get('fragmentsData')
+			fragmentData:  Session.get('fragmentData')
 		});
 		Session.set ('editingExpander', undefined);
 	},
