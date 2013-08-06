@@ -1,5 +1,5 @@
 <template name="expander">
-	<div class="expander">
+	<div id="expander-{{_id}}" class="expander">
 		{{#if editMode}}
 		<h3><input type="text" class="title-input" value="{{title}}"></h3>
 		{{else}}
@@ -32,6 +32,11 @@
 				<!-- using pre for now instead of markdown for now since markdown adds p tags which
 					can throw off the point coordinate-->
 				<pre>{{{renderContent}}}</pre>
+				<!--these get positioned absolutely where they appear within the 
+						expander-->
+				{{#each fragments}}
+				{{> fragment}}
+				{{/each}}
 			</div>
 			<div class="content plain {{show selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c

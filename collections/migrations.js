@@ -18,4 +18,13 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "addTitle"});
 	}
+	/* 
+	if (!Migrations.findOne({name: "addParentExpanderIdToFragment"})) {
+		Expanders.find().forEach(function (expander) {
+			_.each(expander.fragments, function(fragment) {
+			});
+		});
+		Migrations.insert({name: "addTitle"});
+	}
+	 */
 });

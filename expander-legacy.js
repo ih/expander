@@ -95,12 +95,12 @@ if (Meteor.is_client){
     };
     //***FRAGMENTS VIEWER END***//
     //***FRAGMENT BEGIN***//
-    Template.fragment.getExpander = function() {
+    Template.fragmentLegacy.getExpander = function() {
         self = this;
         return Expanders.findOne(self.id) || {};
     };
 
-    Template.fragment.events({
+    Template.fragmentLegacy.events({
         'change, keyup, blur .border': function(event) {
             //TODO move this to utility library
              function updateFragmentBorder(parentExpander, expanderId,

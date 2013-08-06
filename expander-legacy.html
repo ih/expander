@@ -28,12 +28,12 @@
 <template name="fragmentsViewer">
   {{#each getHighlightedFragments}}
   <!-- TODO change view expander and use it here-->
-  {{> fragment this}}
+  {{> fragmentLegacy this}}
   {{/each}}
 </template>
 
-<template name="fragment">
-<div class="fragment {{this.id}}">
+<template name="fragmentLegacy">
+<div class="fragmentLegacy {{this.id}}">
     open: <input type="text" class="border-input open"
                  value="{{this.border.open}}" />
     close: <input type="text" class="border-input close"

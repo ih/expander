@@ -21,10 +21,10 @@ Template.expanderCreator.events({
         //create a new expander
 	// server-side createExpander will fill in fragment's id attribute
 	// if there was a parent
-	Meteor.call ('createExpander', 
-		     {newExpanderData:  newExpanderData,  
+	Meteor.call ('createExpander',
+		     {newExpanderData:  newExpanderData,
 		      fragment: fragment
-		     }, 
+		     },
 		     function (error, id) {
 			 if (error) {
 			     return alert (error.reason);
