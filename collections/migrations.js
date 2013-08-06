@@ -7,24 +7,25 @@ Meteor.startup(function () {
 		Expanders.find().forEach(function (expander) {
 			if (!expander.title) {
 				if (expander.parent) {
-					Expanders.update(expander._id, 
-									 {$set: {title: expander.parentFragment}});
+					Expanders.update(
+						expander._id, {$set: {title: expander.parentFragment}});
 				}
 				else {
-					Expanders.update(expander._id, 
-									 {$set: {title: 'no title'}});
+					Expanders.update(
+						expander._id, {$set: {title: 'no title'}});
 				}
 			}
 		});
 		Migrations.insert({name: "addTitle"});
 	}
-	/* 
 	if (!Migrations.findOne({name: "addParentExpanderIdToFragment"})) {
 		Expanders.find().forEach(function (expander) {
 			_.each(expander.fragments, function(fragment) {
+				fragment.parentExpanderId = expander._id;
 			});
+			Expanders.update(
+				expander._id, {$set: {fragments: expander.fragments}});
 		});
-		Migrations.insert({name: "addTitle"});
+		Migrations.insert({name: "addParentExpanderIdToFragment"});
 	}
-	 */
 });
