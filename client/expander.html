@@ -32,11 +32,7 @@
 				<!-- using pre for now instead of markdown for now since markdown adds p tags which
 					can throw off the point coordinate-->
 				<pre>{{{renderContent}}}</pre>
-				<!--these get positioned absolutely where they appear within the 
-						expander-->
-				{{#each fragments}}
-				{{> fragment}}
-				{{/each}}
+
 			</div>
 			<div class="content plain {{show selectMode}}">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
@@ -52,6 +48,13 @@
 			</div>
 			<div>
 				{{> fragmentsViewer this}}
+			</div>
+			<div>
+				<!--these get positioned absolutely where they appear within the 
+						expander-->
+				{{#each fragments}}
+				{{> fragment this}}
+				{{/each}}
 			</div>
 		</div>
 	</div>
