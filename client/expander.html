@@ -19,22 +19,12 @@
 			Highlight Selected Fragments
 		</button>
 
-		<!--TODO make edit/view-mode separate templates?-->
-		<!--TODO use if helper rather than applying a class -->
 		<div class="edit-mode {{show editMode}}">
 			<pre>{{{renderContent}}}</pre>
 		</div>
 		<div class="view-mode {{hide editMode}}">
 			<button class="edit {{hide editMode}}">Edit</button>
-			<div class="content rendered  {{hide selectMode}}">
-				<!-- important to have the pre tags wrapped tightly around the content b/c
-					whitespace will get displayed-->
-				<!-- using pre for now instead of markdown for now since markdown adds p tags which
-					can throw off the point coordinate-->
-				<pre>{{{renderContent}}}</pre>
-
-			</div>
-			<div class="content plain {{show selectMode}}">
+			<div class="content">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
 				<pre>{{content}}</pre>

@@ -7,7 +7,7 @@ function getIndicatorCoordinates(fragment) {
 	var $expanderContentElement =
 			$('#expander-' +
 			  fragment.parentExpanderId +
-			  ' .view-mode .content.plain pre');
+			  ' .view-mode .content pre');
 	var indicatorPosition = fragment.border.close;
 	var textWithSpan = $expanderContentElement
 			.html()
