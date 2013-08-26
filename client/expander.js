@@ -132,11 +132,24 @@ Template.expander.editMode = function () {
 	}
 };
 
+function setFragmentIndicatorValues(expander) {
+	var indicatorValues = {};
+	_.each(expander.fragments, function(fragment) {
+		incrementCounterDictionary(indicatorValues, fragment.border.close);
+	});
+	Session.setObjectValue('indicators', expander._id, indicatorValues);
+}
+
 Template.expander.rendered = function () {
+	var self = this;
     var colorMap = Session.get('colorMap');
     _.each(_.keys(colorMap), function(fragmentId) {
         $('span.'+fragmentId).css('color', colorMap[fragmentId]);
     });
+	if(!Session.get('indicators')) {
+		Session.set('indicators', {});
+	}
+	setFragmentIndicatorValues(self.data);
 };
 
 function highlightFragment(caretPosition) {
@@ -208,3 +221,6 @@ function insertFragmentMarkers (content, fragments) {
 	}
     return newContent;
 }
+
+
+

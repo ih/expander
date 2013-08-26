@@ -30,6 +30,18 @@ function positionIndicator(fragment) {
 	var coordinates = getIndicatorCoordinates(fragment);
 	$('#fragment-indicator-' + fragment.id).offset(coordinates);
 }
+
 Template.fragment.rendered = function() {
-	positionIndicator(this.data);
+	var self = this;
+	positionIndicator(self.data);
+};
+
+Template.fragment.getIndicatorValue = function() {
+	var self = this;
+	var thisExpanderIndicators = Session.getObjectValue(
+		'indicators', self.parentExpanderId);
+	if(!thisExpanderIndicators || thisExpanderIndicators === {}) {
+		return 0;
+	}
+	return thisExpanderIndicators[self.border.close];
 };

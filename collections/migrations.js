@@ -2,6 +2,10 @@
 // http://stackoverflow.com/questions/10365496/meteor-how-to-perform-database-migrations
 Migrations = new Meteor.Collection('migrations');
 
+Migrations.allow({
+	insert: function(userId, doc) {return true;}
+});
+
 Meteor.startup(function () {
 	if (!Migrations.findOne({name: "addTitle"})) {
 		Expanders.find().forEach(function (expander) {
