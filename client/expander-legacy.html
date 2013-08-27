@@ -1,0 +1,45 @@
+<!-- TODO remove unused templates, move others to appropriate place -->
+<template name="welcome">
+  <h1>Welcome!</h1>
+</template>
+<template name="expanderKeys">
+<div class="expander-keys">
+  {{#each getTopExpanders}}
+  <div><a href="{{expanderViewerPath this}}">{{title}}</a></div>
+  {{/each}}
+</div>
+</template>
+
+<template name="expanderSelector">
+<div>
+  <input></input>
+  <button>Submit</button>
+</div>
+</template>
+
+<!-- TODO (irvin) pass argument to template instead of using "global"
+     session variable? -->
+<template name="expanderViewer">
+  {{> expander selectedExpander}}
+</template>
+
+
+<!-- preview possible expansions for the currently viewed expander
+     based on where the mouse is hovering -->
+<template name="fragmentsViewer">
+  {{#each getHighlightedFragments}}
+  <!-- TODO change view expander and use it here-->
+  {{> fragmentLegacy this}}
+  {{/each}}
+</template>
+
+<template name="fragmentLegacy">
+<div class="fragmentLegacy {{this.id}}">
+    open: <input type="text" class="border-input open"
+                 value="{{this.border.open}}" />
+    close: <input type="text" class="border-input close"
+                  value="{{this.border.close}}" />
+    {{> expander getExpander}}
+</div>
+</template>
+

@@ -13,7 +13,9 @@ Template.expanderCreator.events({
 	};
 	    //if there is selection data then add it to the expander
 	if (self.parent) {
-	    fragment = {border : self.border, id : undefined};
+	    fragment = {border: self.border,
+					id: undefined,
+					parentExpanderId: self.parent._id};
 	    newExpanderData.parent = self.parent._id;
 	    newExpanderData.parentFragment = self.selectionString;
 	}
