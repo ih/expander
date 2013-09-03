@@ -23,7 +23,7 @@
     /*
      Display logic that crosses that may affect more than one template
      */
-    //used to store color for fragment markers
+    //used to store color for fragment borders
     Session.set('colorMap', {});
     //used to determine whether a fragment is currently highlighted or not
     Session.set('highlightStates', {});
@@ -31,12 +31,12 @@
         //update display for fragments with highlight state true
         var highlightStates = Session.get('highlightStates');
         _.each(_.keys(highlightStates), function (fragmentId) {
-            var fragmentMarkerClass = '.fragment-marker.' + fragmentId;
+            var fragmentBorderClass = '.fragment-border.' + fragmentId;
             if ( highlightStates[fragmentId] ) {
-                $(fragmentMarkerClass).removeClass('hide');
+                $(fragmentBorderClass).removeClass('hide');
             }
             else {
-                $(fragmentMarkerClass).addClass('hide');
+                $(fragmentBorderClass).addClass('hide');
             }
         });
     }

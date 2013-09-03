@@ -108,8 +108,12 @@ Template.expander.renderContent = function () {
 
     if (renderingExpander.content) {
         //assume content is a linear indexable structure
-        var renderedContent = insertFragmentMarkers(renderingExpander.content,
-                                                    renderingExpander.fragments);
+		var borderDictionary = createBorderDictionary(
+			renderingExpander.fragments);
+        var renderedContent = insertFragmentBorders(
+			renderingExpander.content, borderDictionary);
+		renderedContent = insertFragmentIndicators(
+			renderedContent, borderDictionary);
         return renderedContent;
     }
     else {
@@ -159,9 +163,14 @@ function highlightFragment(caretPosition) {
 
 }
 
-
-function insertFragmentMarkers (content, fragments) {
-    function createMarker (fragment, type) {
+function createBorderDictionary (fragments) {
+    /*
+     A dictionary where the keys are positions in the content and the 
+	 values are spans representing the borders of the fragments
+	 open spans should always come after closing spans when
+     rendering.
+     */
+    function createBorder (fragment, type) {
         var colorMap = Session.get('colorMap');
         var highlightStates = Session.get('highlightStates');
         if (colorMap[fragment.id] === undefined) {
@@ -169,45 +178,42 @@ function insertFragmentMarkers (content, fragments) {
             colorMap[fragment.id] = newColor;
         }
         Session.set('colorMap', colorMap);
-        var marker = type === 'open' ? '[' : ']';
+        var border = type === 'open' ? '[' : ']';
         var hidden = highlightStates[fragment.id] ? '' : 'hide';
-        return '<span class="'+hidden+' fragment-marker '+ type + ' ' +
-			fragment.id + '">'+ marker +'</span>';
-    }
-    function createMarkerDictionary (fragments) {
-        /*
-         A dictionary where the positions in the content and the values are
-         spans open spans should always come after closing spans when
-         rendering.
-         */
-        var markerDictionary = {};
-        _.each(fragments, function (fragment) {
-            if (markerDictionary[fragment.border.open] === undefined) {
-                markerDictionary[fragment.border.open] = {open : [],
-                                                          close : []};
-            }
-            if (markerDictionary[fragment.border.close] === undefined) {
-                markerDictionary[fragment.border.close] = {open : [],
-                                                           close : []};
-            }
-            var beginMarker = createMarker(fragment, 'open');
-            markerDictionary[fragment.border.open]['open'].push(beginMarker);
-            var endMarker = createMarker(fragment, 'close');
-            markerDictionary[fragment.border.close]['close'].push(endMarker);
-        });
-        return markerDictionary;
+        return '<span class="'+hidden+' fragment-border '+ type + ' ' +
+			fragment.id + '">'+ border +'</span>';
     }
 
-    var markerDictionary = createMarkerDictionary(fragments);
+
+    var borderDictionary = {};
+    _.each(fragments, function (fragment) {
+        if (borderDictionary[fragment.border.open] === undefined) {
+            borderDictionary[fragment.border.open] = {open : [],
+                                                      close : []};
+        }
+        if (borderDictionary[fragment.border.close] === undefined) {
+            borderDictionary[fragment.border.close] = {open : [],
+                                                       close : []};
+        }
+        var beginBorder = createBorder(fragment, 'open');
+        borderDictionary[fragment.border.open]['open'].push(beginBorder);
+        var endBorder = createBorder(fragment, 'close');
+        borderDictionary[fragment.border.close]['close'].push(endBorder);
+    });
+    return borderDictionary;
+}
+
+
+function insertFragmentBorders (content, borderDictionary) {
     var newContent = '';
     /*
-     Insert fragment markers by iterating over content instead of fragments
-     since adding markers will change the length of the new content and
+     Insert fragment borders by iterating over content instead of fragments
+     since adding borders will change the length of the new content and
      make the fragment border information incorrect
      */
-	for (var index = 0; index <= content.length; index ++ ) {
+	for (var index = 0; index <= content.length; index++ ) {
 		var character = content[index];
-		var spanList = markerDictionary[index];
+		var spanList = borderDictionary[index];
         if (spanList) {
             _.each(spanList['close'].concat(spanList['open']),
                    function(span) {
@@ -222,5 +228,29 @@ function insertFragmentMarkers (content, fragments) {
     return newContent;
 }
 
+function insertFragmentIndicators(content, borderDictionary) {
+	/*
+	 Fragment indicators are visual cues for where fragments occur in the
+	 content and how many end at a particular location
 
+	 This function modifies content by inserting an indicator at the end of a
+	 series of closing borders
+	 */
+	var a = {1: 2, 3: 4};
 
+	_.each(_.keys(borderDictionary),  function(position) {
+		var closingBorders = borderDictionary[position]['close'];
+		var fragmentCount = closingBorders.length;
+		if(fragmentCount > 0) {
+			var lastClosingBorder = _.last(closingBorders);
+			var newIndicatorPosition = (
+				content.indexOf(lastClosingBorder) + lastClosingBorder.length);
+			var indicator = '<sup class=\"fragment-indicator\">'+fragmentCount+'</sup>';
+			content = content.splice(newIndicatorPosition, 0, indicator);
+		}
+	});
+	return content;
+}
+	/* 
+
+*/

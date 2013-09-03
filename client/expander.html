@@ -27,7 +27,7 @@
 			<div class="content">
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
-				<pre>{{content}}</pre>
+				<pre>{{{renderContent}}}</pre>
 			</div>
 			<div>
 				<ul>
@@ -38,13 +38,6 @@
 			</div>
 			<div>
 				{{> fragmentsViewer this}}
-			</div>
-			<div>
-				<!--these get positioned absolutely where they appear within the 
-						expander-->
-				{{#each fragments}}
-				{{> fragment this}}
-				{{/each}}
 			</div>
 		</div>
 	</div>
