@@ -5,18 +5,57 @@ var highlightAllFragments = function (expander) {
     });
 };
 
+// from http://stackoverflow.com/a/4652824
+function getSelectionHtml(selection) {
+    var html = "";
+	if (selection.rangeCount) {
+            var container = document.createElement("div");
+            for (var i = 0, len = selection.rangeCount; i < len; ++i) {
+                container.appendChild(selection.getRangeAt(i).cloneContents());
+            }
+            html = container.innerHTML;
+        }
+    return html;
+}
+
+function removeAnnotations(html) {
+	// from http://stackoverflow.com/a/12110097
+	function removeFromHtmlString(htmlString, selector) {
+		var $wrapped = $('<div>'+htmlString+'</div>');
+		$wrapped.remove(selector);
+		return $wrapped.html();
+	}
+	function removeFragmentIndicators(html) {
+		return removeFromHtmlString(html, '.fragment-indicator');
+	}
+	html = removeFragmentIndicators(html);
+	html = removeBorderMarkers(html);
+	return html;
+}
+
+function determineBorder(selection, content) {
+}
+
+
+function getBorderAndSelectedContent(selection, content) {
+	var selectedHtml = getSelectionHtml(selection);
+	var selectedContent = removeAnnotations(selectedHtml);
+	var border = determineBorder(selection, content);
+	return [border, selectedContent];
+}
+
 Template.expander.events({
     'mouseup .content' : function (event, template) {
         var selection = window.getSelection();
-        var selectionString = selection.toString();
+		var processedSelection = getBorderAndSelectedContent(selection);
+		var border = processedSelection[0];
+		var selectedContent = processedSelection[1];
 		// TODO order these so open is always the smaller one (can be
 		// reversed if selected from left to right)
-        var border = { open : selection.baseOffset,
-                       close : selection.extentOffset };
         Session.set('selectMode', false);
-        if(selectionString.length > 0) {
+        if(selectedContent) {
             Session.set('showCreator', true);
-            Session.set('fragmentData', {selectionString : selectionString,
+            Session.set('fragmentData', {selectionString : selectedContent,
                                          parent : this,
                                          border : border});
         }
@@ -236,8 +275,6 @@ function insertFragmentIndicators(content, borderDictionary) {
 	 This function modifies content by inserting an indicator at the end of a
 	 series of closing borders
 	 */
-	var a = {1: 2, 3: 4};
-
 	_.each(_.keys(borderDictionary),  function(position) {
 		var closingBorders = borderDictionary[position]['close'];
 		var fragmentCount = closingBorders.length;
