@@ -22,14 +22,11 @@ function removeAnnotations(html) {
 	// from http://stackoverflow.com/a/12110097
 	function removeFromHtmlString(htmlString, selector) {
 		var $wrapped = $('<div>'+htmlString+'</div>');
-		$wrapped.remove(selector);
+		$wrapped.find(selector).remove();
 		return $wrapped.html();
 	}
-	function removeFragmentIndicators(html) {
-		return removeFromHtmlString(html, '.fragment-indicator');
-	}
-	html = removeFragmentIndicators(html);
-	html = removeBorderMarkers(html);
+	html = removeFromHtmlString(html, '.fragment-indicator');
+	html = removeFromHtmlString(html,  '.fragment-border');
 	return html;
 }
 
