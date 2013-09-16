@@ -18,35 +18,74 @@ function getSelectionHtml(selection) {
     return html;
 }
 
-function removeAnnotations(html) {
+function removeAnnotations(htmlString) {
 	// from http://stackoverflow.com/a/12110097
 	function removeFromHtmlString(htmlString, selector) {
 		var $wrapped = $('<div>'+htmlString+'</div>');
 		$wrapped.find(selector).remove();
 		return $wrapped.html();
 	}
-	html = removeFromHtmlString(html, '.fragment-indicator');
-	html = removeFromHtmlString(html,  '.fragment-border');
-	return html;
+	htmlString = removeFromHtmlString(htmlString, '.fragment-indicator');
+	htmlString = removeFromHtmlString(htmlString,  '.fragment-border');
+	return htmlString;
 }
 
 function determineBorder(selection, content) {
 }
 
 
-function getBorderAndSelectedContent(selection, content) {
-	var selectedHtml = getSelectionHtml(selection);
-	var selectedContent = removeAnnotations(selectedHtml);
-	var border = determineBorder(selection, content);
-	return [border, selectedContent];
+function getBorderAndSelectedContent(selectionMarkers, contentHtmlString) {
+	var nonAnnotatedMarkedContent = removeAnnotations(contentHtmlString);
+	var border = {
+		'open': nonAnnotatedMarkedContent.indexOf(selectionMarkers.open),
+		'close': nonAnnotatedMarkedContent.indexOf(selectionMarkers.close) -
+			selectionMarkers.open.length
+	};
+
+	var selectedContent = nonAnnotatedMarkedContent.slice(
+		border.open+selectionMarkers.open.length,
+		border.close+selectionMarkers.open.length);
+	return {border: border, selectedContent: selectedContent};
+}
+
+function insertSelectionMarkers(selection) {
+	function createMarkers() {
+		// need a string that probably does not appear in the content
+		// so that we can use indexOf to find it
+		var uniqueString = new Date().getTime();
+		var openMarker = 
+			'<span class="selectionMarker" id="open'+uniqueString+'"></span>';
+		var closeMarker = 
+			'<span class="selectionMarker" id="close'+uniqueString+'"></span>';
+		// [0] since they are jquery created and you need to extract the dom 
+		// node for insertNode
+		return {open: openMarker, close: closeMarker};
+	}
+	var markers = createMarkers();
+	// insert the opening marker at the beginning of the selection
+	var range = selection.getRangeAt(0);
+	range.insertNode($(markers.open)[0]);
+	// insert the closing marker at the end of the selection
+	range.collapse(false);
+	range.insertNode($(markers.close)[0]);
+	return markers;
+}
+
+function removeSelectionMarkers() {
+	$('.selectionMarker').remove();
 }
 
 Template.expander.events({
     'mouseup .content' : function (event, template) {
         var selection = window.getSelection();
-		var processedSelection = getBorderAndSelectedContent(selection);
-		var border = processedSelection[0];
-		var selectedContent = processedSelection[1];
+		var markers = insertSelectionMarkers(selection);
+		// TODO find a more robust way of getting contentHtml
+		var contentHtmlString = $(event.target).html();
+		var processedSelection = getBorderAndSelectedContent(
+			markers, contentHtmlString);
+		removeSelectionMarkers();
+		var border = processedSelection.border;
+		var selectedContent = processedSelection.selectedContent;
 		// TODO order these so open is always the smaller one (can be
 		// reversed if selected from left to right)
         Session.set('selectMode', false);
