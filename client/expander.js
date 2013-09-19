@@ -104,6 +104,10 @@ Template.expander.events({
                 document.caretRangeFromPoint(event.x, event.y).endOffset;
         highlightFragment(caretPosition);
     },
+	'click .fragment-indicator': function(event, template) {
+		var self = this;
+		alert('hello');
+	},
     'click .highlight-all-fragments' : function (event, template) {
         var self = this;
         highlightAllFragments (self);
@@ -238,27 +242,28 @@ function highlightFragment(caretPosition) {
 
 }
 
+
+function createBorderElement(fragmentId, type) {
+    var colorMap = Session.get('colorMap');
+    var highlightStates = Session.get('highlightStates');
+    if (colorMap[fragmentId] === undefined) {
+        var newColor = randomColor();
+        colorMap[fragmentId] = newColor;
+    }
+    Session.set('colorMap', colorMap);
+    var border = type === 'open' ? '[' : ']';
+    var hidden = highlightStates[fragmentId] ? '' : 'hide';
+    return '<span class="'+hidden+' fragment-border '+ type + ' ' +
+		fragmentId + '">'+ border +'</span>';
+}
+
 function createBorderDictionary (fragments) {
     /*
-     A dictionary where the keys are positions in the content and the 
+     A dictionary where the keys are positions in the content and the
 	 values are spans representing the borders of the fragments
 	 open spans should always come after closing spans when
      rendering.
      */
-    function createBorder (fragment, type) {
-        var colorMap = Session.get('colorMap');
-        var highlightStates = Session.get('highlightStates');
-        if (colorMap[fragment.id] === undefined) {
-            var newColor = randomColor();
-            colorMap[fragment.id] = newColor;
-        }
-        Session.set('colorMap', colorMap);
-        var border = type === 'open' ? '[' : ']';
-        var hidden = highlightStates[fragment.id] ? '' : 'hide';
-        return '<span class="'+hidden+' fragment-border '+ type + ' ' +
-			fragment.id + '">'+ border +'</span>';
-    }
-
 
     var borderDictionary = {};
     _.each(fragments, function (fragment) {
@@ -270,10 +275,8 @@ function createBorderDictionary (fragments) {
             borderDictionary[fragment.border.close] = {open : [],
                                                        close : []};
         }
-        var beginBorder = createBorder(fragment, 'open');
-        borderDictionary[fragment.border.open]['open'].push(beginBorder);
-        var endBorder = createBorder(fragment, 'close');
-        borderDictionary[fragment.border.close]['close'].push(endBorder);
+        borderDictionary[fragment.border.open]['open'].push(fragment.id);
+        borderDictionary[fragment.border.close]['close'].push(fragment.id);
     });
     return borderDictionary;
 }
@@ -288,9 +291,22 @@ function insertFragmentBorders (content, borderDictionary) {
      */
 	for (var index = 0; index <= content.length; index++ ) {
 		var character = content[index];
-		var spanList = borderDictionary[index];
-        if (spanList) {
-            _.each(spanList['close'].concat(spanList['open']),
+		var fragmentList = borderDictionary[index];
+        if (fragmentList) {
+			// TODO refactor the create of the border tag lists
+			// create the html tags that represent borders of a fragment
+			var closeBorders = _.map(
+				fragmentList['close'], function(fragmentId) {
+					return createBorderElement(fragmentId, 'close');
+				});
+			var openBorders = _.map(
+				fragmentList['open'], function(fragmentId) {
+					return createBorderElement(fragmentId, 'open');
+				});
+
+			// insert the closing border html elements before the open ones for
+			// asthetics
+            _.each(closeBorders.concat(openBorders),
                    function(span) {
                        newContent += span;
                    });
@@ -312,13 +328,16 @@ function insertFragmentIndicators(content, borderDictionary) {
 	 series of closing borders
 	 */
 	_.each(_.keys(borderDictionary),  function(position) {
-		var closingBorders = borderDictionary[position]['close'];
-		var fragmentCount = closingBorders.length;
+		var closingBorderIds = borderDictionary[position]['close'];
+		var fragmentCount = closingBorderIds.length;
+		var fragmentIdString = closingBorderIds.join(' ');
 		if(fragmentCount > 0) {
-			var lastClosingBorder = _.last(closingBorders);
+			var lastClosingBorder = createBorderElement(
+				_.last(closingBorderIds), 'close');
 			var newIndicatorPosition = (
 				content.indexOf(lastClosingBorder) + lastClosingBorder.length);
-			var indicator = '<sup class=\"fragment-indicator\">'+fragmentCount+'</sup>';
+			// TODO break line nicely
+			var indicator = '<sup class=\"fragment-indicator\" data-fragment-ids=\"' +fragmentIdString + '\">'+fragmentCount+'</sup>';
 			content = content.splice(newIndicatorPosition, 0, indicator);
 		}
 	});
