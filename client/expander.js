@@ -53,11 +53,11 @@ function insertSelectionMarkers(selection) {
 		// need a string that probably does not appear in the content
 		// so that we can use indexOf to find it
 		var uniqueString = new Date().getTime();
-		var openMarker = 
+		var openMarker =
 			'<span class="selectionMarker" id="open'+uniqueString+'"></span>';
-		var closeMarker = 
+		var closeMarker =
 			'<span class="selectionMarker" id="close'+uniqueString+'"></span>';
-		// [0] since they are jquery created and you need to extract the dom 
+		// [0] since they are jquery created and you need to extract the dom
 		// node for insertNode
 		return {open: openMarker, close: closeMarker};
 	}
@@ -105,8 +105,14 @@ Template.expander.events({
         highlightFragment(caretPosition);
     },
 	'click .fragment-indicator': function(event, template) {
+		function getClosingFragmentIds(indicatorElement) {
+			return $(indicatorElement).attr('data-fragment-ids').split(' ');
+		}
 		var self = this;
-		alert('hello');
+		var closingFragmentIds = getClosingFragmentIds(event.target);
+		_.each(closingFragmentIds, function(fragmentId) {
+			Session.setObjectValue('highlightStates', fragmentId, true);
+		});
 	},
     'click .highlight-all-fragments' : function (event, template) {
         var self = this;
@@ -260,9 +266,7 @@ function createBorderElement(fragmentId, type) {
 function createBorderDictionary (fragments) {
     /*
      A dictionary where the keys are positions in the content and the
-	 values are spans representing the borders of the fragments
-	 open spans should always come after closing spans when
-     rendering.
+	 values are fragment ids
      */
 
     var borderDictionary = {};
@@ -343,6 +347,6 @@ function insertFragmentIndicators(content, borderDictionary) {
 	});
 	return content;
 }
-	/* 
+	/*
 
 */
