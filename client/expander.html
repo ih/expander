@@ -3,9 +3,11 @@
 		{{#if editMode}}
 		<h3><input type="text" class="title-input" value="{{title}}"></h3>
 		{{else}}
-		<h3>{{title}}</h3>
+		<a href="/expanders/{{_id}}"><h3>{{title}}</h3></a>
 		{{/if}}
-
+		{{#unless currentExpander}}
+		<button class="unexpand">close</button>
+		{{/unless}}
 		{{#if parent}}
 		<div>parent: <a href="/expanders/{{parent}}">{{getParentFragment _id}}</a></div>
 		{{/if}}
@@ -28,13 +30,6 @@
 				<!-- important to have the pre tags wrapped tightly around the content b/c
 					whitespace will get displayed-->
 				<pre>{{{renderContent}}}</pre>
-			</div>
-			<div>
-				<ul>
-					{{#each fragments}}
-					<li><a href="/expanders/{{id}}">{{getParentFragment id}}</a></li>
-					{{/each}}
-				</ul>
 			</div>
 			<div>
 				{{> fragmentsViewer this}}

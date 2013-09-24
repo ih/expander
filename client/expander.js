@@ -108,11 +108,38 @@ Template.expander.events({
 		function getClosingFragmentIds(indicatorElement) {
 			return $(indicatorElement).attr('data-fragment-ids').split(' ');
 		}
+		function isIndicatorExpanded(closingFragmentIds) {
+			return _.some(closingFragmentIds, function(fragmentId) {
+				return Session.getObjectValue('highlightStates', fragmentId);
+			});
+		}
+		function setIndicatorExpanded(indicatorElement, flag) {
+			if(flag) {
+				$(indicatorElement).addClass('expanded');
+			}
+			else {
+				$(indicatorElement).removeClass('expanded');
+			}
+		}
 		var self = this;
 		var closingFragmentIds = getClosingFragmentIds(event.target);
-		_.each(closingFragmentIds, function(fragmentId) {
-			Session.setObjectValue('highlightStates', fragmentId, true);
-		});
+		if(isIndicatorExpanded(closingFragmentIds)) {
+			_.each(closingFragmentIds, function(fragmentId) {
+				Session.setObjectValue('highlightStates', fragmentId, false);
+			});
+			setIndicatorExpanded(event.target, false);
+		}
+		else {
+			_.each(closingFragmentIds, function(fragmentId) {
+				Session.setObjectValue('highlightStates', fragmentId, true);
+			});
+			setIndicatorExpanded(event.target, true);
+		}
+		event.stopImmediatePropagation();
+	},
+	'click .unexpand' : function(event, template) {
+		var self = this;
+		Session.setObjectValue('highlightStates', self._id, false);
 	},
     'click .highlight-all-fragments' : function (event, template) {
         var self = this;
@@ -204,6 +231,12 @@ Template.expander.renderContent = function () {
     else {
         return '';
     }
+};
+
+Template.expander.currentExpander = function () {
+	self = this;
+	var currentId = _.last(window.location.pathname.split('/'));
+	return self._id === currentId;
 };
 
 Template.expander.selectMode = function () {
