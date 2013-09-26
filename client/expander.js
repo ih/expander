@@ -19,12 +19,22 @@ function getSelectionHtml(selection) {
 }
 
 function removeAnnotations(htmlString) {
+	//Don't want to remove selection markers that may end up inside the 
+	// annotation tags
+	function moveUpSelectionMarkers($html, selector) {
+		$html.find(selector + ' .selectionMarker').each(function() {
+			$(this).insertBefore($(this).parent());
+		});
+		return $html;
+	}
 	// from http://stackoverflow.com/a/12110097
 	function removeFromHtmlString(htmlString, selector) {
 		var $wrapped = $('<div>'+htmlString+'</div>');
+		$wrapped = moveUpSelectionMarkers($wrapped, selector);
 		$wrapped.find(selector).remove();
 		return $wrapped.html();
 	}
+
 	htmlString = removeFromHtmlString(htmlString, '.fragment-indicator');
 	htmlString = removeFromHtmlString(htmlString,  '.fragment-border');
 	return htmlString;
@@ -80,7 +90,7 @@ Template.expander.events({
         var selection = window.getSelection();
 		var markers = insertSelectionMarkers(selection);
 		// TODO find a more robust way of getting contentHtml
-		var contentHtmlString = $(event.target).html();
+		var contentHtmlString = $(template.find('.content pre')).html();
 		var processedSelection = getBorderAndSelectedContent(
 			markers, contentHtmlString);
 		removeSelectionMarkers();
@@ -95,6 +105,7 @@ Template.expander.events({
                                          parent : this,
                                          border : border});
         }
+		event.stopImmediatePropagation ();
     },
     'mousedown .content' : function (event, template) {
         Session.set('selectMode', true);

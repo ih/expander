@@ -86,7 +86,7 @@
     Template.fragmentsViewer.rendered = function () {
         var colorMap = Session.get('colorMap');
         _.each(_.keys(colorMap), function(fragmentId) {
-            $('.fragment.'+fragmentId).css('border-color', colorMap[fragmentId]);
+            $('.fragmentLegacy.'+fragmentId).css('border-color', colorMap[fragmentId]);
         });
     };
     //***FRAGMENTS VIEWER END***//
