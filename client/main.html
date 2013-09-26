@@ -11,7 +11,7 @@
 			{{renderPage}}
 		</div>
 		<div class="control-pane">
-			{{> expanderKeys}}
+			{{> recentlyEditedExpanders}}
 			{{#if currentUser}}
 			{{#if isEditMode}}
 			{{> expanderEditor}}
@@ -19,7 +19,14 @@
 			{{> expanderCreator getSelectedFragmentData}}
 			{{/if}}
 			{{/if}}
+			{{> expanderKeys}}			
 			<div>
 	</div>
 </body>
 
+<template name="recentlyEditedExpanders">
+	<strong>Recently Edited</strong>
+	{{#each getRecentlyEditedExpanders}}
+  <div><a href="{{expanderViewerPath this}}">{{title}}</a></div>
+	{{/each}}
+</template>

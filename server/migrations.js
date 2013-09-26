@@ -28,4 +28,13 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "addParentExpanderIdToFragment"});
 	}
+	if(!Migrations.findOne({name: 'lastEditTime'})) {
+		Expanders.find().forEach(function(expander) {
+			if(!expander.lastEditTime) {
+				var currentTime = new Date().getTime();
+				Expanders.update(
+					expander._id, {$set: {lastEditTime: currentTime}});
+			}
+		});
+	}
 });

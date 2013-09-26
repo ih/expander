@@ -26,6 +26,7 @@ Meteor.methods ({
 		var additionalExpanderData = {
 			creatorId: user._id,
 			creationDate: new Date ().getTime (),
+			lastEditTime: new Date ().getTime (),
 			fragments: []
 		};
 		_.extend (expanderData, additionalExpanderData);
@@ -40,7 +41,6 @@ Meteor.methods ({
     updateExpander: function (dataFromClient) {
 	    // this expanderData has updated content
 		var updatedExpander = dataFromClient.updatedExpander;
-
 		function removeAsFragment (updatedExpander) {
 			if (updatedExpander.parent !== undefined) {
 				// remove the expander corresponding to expanderId from its
@@ -137,6 +137,7 @@ Meteor.methods ({
 		// for the expanders that corresponds to those fragments
 		var originalExpander = Expanders.findOne(updatedExpander._id);
 		adjustIfFragmentsChanged(originalExpander, updatedExpander);
+		updatedExpander.lastEditTime = new Date().getTime();
 		Expanders.update (updatedExpander._id, 
 						  {$set: _.omit (updatedExpander, '_id')});
     },
