@@ -10,7 +10,7 @@ Expanders = new Meteor.Collection('expanders');
 			open: 13,
 			close: 20
 		},
-		id: 'expander123'
+		toExpanderId: 'expander123'
 	}],
 	parentFragment: 'from the parent'
 	creationTime: 12345,
@@ -49,7 +49,7 @@ Meteor.methods ({
 		var newExpanderId = Expanders.insert (expanderData);
 		if (dataFromClient.fragment) {
 			var fragment = dataFromClient.fragment;
-			fragment.id = newExpanderId;
+			fragment.toExpanderId = newExpanderId;
 			Expanders.update (expanderData.parent,
 							  {$push: {fragments: fragment}});
 		}
@@ -63,7 +63,7 @@ Meteor.methods ({
 				// parent fragments
 				var parentExpander = Expanders.findOne (updatedExpander.parent);
 				function sameId (fragment) {
-					return fragment.id === updatedExpander._id;
+					return fragment.toExpanderId === updatedExpander._id;
 				};
 				parentExpander.fragments = _.reject (
 					parentExpander.fragments, sameId);
@@ -81,7 +81,7 @@ Meteor.methods ({
 			// list
 			var newFragment = {
 				border: fragmentData.border,
-				id: updatedExpander._id
+				toExpanderId: updatedExpander._id
 			};
 			Expanders.update (fragmentData.parent._id,
 							  {$push: {fragments: newFragment}});
@@ -109,14 +109,14 @@ Meteor.methods ({
 				var changedFragmentData = _.map(
 					fragmentPairs, function(fragmentPair) {
 						console.assert(
-							fragmentPair[OLD].id  === fragmentPair[NEW].id);
+							fragmentPair[OLD].toExpanderId  === fragmentPair[NEW].toExpanderId);
 						var newFragmentContent = getFragmentContent(
 							fragmentPair[NEW], updatedExpander);
 						var oldFragmentContent = getFragmentContent(
 							fragmentPair[OLD], originalExpander);
 						if(newFragmentContent !== oldFragmentContent) {
 							return {
-								id: fragmentPair[NEW].id,
+								toExpanderId: fragmentPair[NEW].toExpanderId,
 								newContent: newFragmentContent
 							};
 						}
@@ -132,7 +132,7 @@ Meteor.methods ({
 				 * corresponds to the fragment that has changed
 				 */
 				Expanders.update(
-					changedFragmentData.id,
+					changedFragmentData.toExpanderId,
 					{$set: {parentFragment: changedFragmentData.newContent}});
 			}
 			var changedFragments =
@@ -161,7 +161,7 @@ Meteor.methods ({
 		function removeFromParentFragments (parentId, expanderId) {
 			var parent = Expanders.findOne (parentId);
 			var targetFragment = _.find (parent.fragments, function (fragment) {
-				return fragment.id === expanderId;
+				return fragment.toExpanderId === expanderId;
 			});
 			// TODO is there a way to do this without getting the parent first?
 			Expanders.update (parentId, {$pull: {fragments: targetFragment}});

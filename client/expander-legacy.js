@@ -54,7 +54,7 @@
         var self = this;
         try {
             var highlightedFragments = _.filter(self.fragments, function (fragment) {
-                return Session.get('highlightStates')[fragment.id];
+                return Session.get('highlightStates')[fragment.toExpanderId];
             });
             return highlightedFragments;
         }
@@ -67,9 +67,9 @@
         var self = this;
         try {
             var highlightedFragments = _.filter(self.fragments, function (fragment) {
-                return Session.get('highlightStates')[fragment.id];
+                return Session.get('highlightStates')[fragment.toExpanderId];
             });
-            var fragmentIds = _.pluck(highlightedFragments, 'id');
+            var fragmentIds = _.pluck(highlightedFragments, 'toExpanderId');
             var highlightedExpanders = _.map(fragmentIds, function(id) {
                 return Expanders.findOne(id);
             });
@@ -93,7 +93,7 @@
     //***FRAGMENT BEGIN***//
     Template.fragmentLegacy.getExpander = function() {
         self = this;
-        return Expanders.findOne(self.id) || {};
+        return Expanders.findOne(self.toExpanderId) || {};
     };
 
     Template.fragmentLegacy.events({
@@ -103,7 +103,7 @@
                                            borderType, newValue) {
                 //modify the border of the fragment in question
                 _.each(parentExpander.fragments, function (fragment) {
-                    if(expanderId === self.id) {
+                    if(expanderId === self.toExpanderId) {
                         fragment.border[borderType] = Number(newValue);
                     }
                 });
@@ -111,17 +111,17 @@
                                  {$set: {fragments: expander.fragments}});
             }
             self = this;
-            var expanderId = self.id;
+            var expanderId = self.toExpanderid;
             //TODO(irvin) better way to determine whether open/close border?
             var newValue = $(event.currentTarget).val();
-            var expander = Expanders.findOne(self.id);
+            var expander = Expanders.findOne(self.toExpanderId);
 	    if (expander &&  expander.parent) {
 		var parentExpander = Expanders.findOne(expander.parent);
 		if(_.contains(event.currentTarget.classList, 'open')) {
-                    updateFragmentBorder(parentExpander, self.id, 'open', newValue);
+                    updateFragmentBorder(parentExpander, self.toExpanderId, 'open', newValue);
 		}
 		else {
-                    updateFragmentBorder(parentExpander, self.id, 'close', newValue);
+                    updateFragmentBorder(parentExpander, self.toExpanderId, 'close', newValue);
 		}
 	    }
         }

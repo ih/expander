@@ -40,6 +40,17 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "removeParentExpanderIdFromFragment"});
 	}
+	if (!Migrations.findOne({name: "changeIdToToExpnaderIdinFragment"})) {
+		Expanders.find().forEach(function (expander) {
+			_.each(expander.fragments, function (fragment) {
+				fragment.toExpanderId = fragment.id;
+				delete fragment.id;
+			});
+			Expanders.update(
+				expander._id, {$set: {fragments: expander.fragments}});
+		});
+		Migrations.insert({name: "changeIdToToExpnaderIdinFragment"});
+	}
 
 	if (!Migrations.findOne({name: 'addLastEditTime'})) {
 		Expanders.find().forEach(function (expander) {

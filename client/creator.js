@@ -15,7 +15,7 @@ Template.expanderCreator.events({
 	if (self.parent) {
 	    fragment = {
 			border: self.border,
-			id: undefined
+			toExpanderid: undefined
 		};
 	    newExpanderData.parent = self.parent._id;
 	    newExpanderData.parentFragment = self.selectionString;

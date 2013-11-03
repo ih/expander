@@ -1,6 +1,6 @@
 var highlightAllFragments = function (expander) {
 	_.each(expander.fragments, function(fragment) {
-        Session.setObjectValue('highlightStates', fragment.id,
+        Session.setObjectValue('highlightStates', fragment.toExpanderId,
 							   true);
     });
 };
@@ -160,7 +160,7 @@ Template.expander.events({
 	'click .clear-all-highlights': function (event, template) {
         var self = this;
         _.each(self.fragments, function(fragment) {
-            Session.setObjectValue('highlightStates', fragment.id,
+            Session.setObjectValue('highlightStates', fragment.toExpanderId,
 								   false);
         });
 
@@ -176,7 +176,7 @@ Template.expander.events({
 			}
 			if (isIntersecting (fragment.border,
 								Session.get ('fragmentData').border)) {
-				Session.setObjectValue ('highlightStates', fragment.id, true);
+				Session.setObjectValue ('highlightStates', fragment.toExpanderId, true);
 			}
 		});
 		event.stopImmediatePropagation ();
@@ -323,8 +323,8 @@ function createBorderDictionary (fragments) {
             borderDictionary[fragment.border.close] = {open : [],
                                                        close : []};
         }
-        borderDictionary[fragment.border.open]['open'].push(fragment.id);
-        borderDictionary[fragment.border.close]['close'].push(fragment.id);
+        borderDictionary[fragment.border.open]['open'].push(fragment.toExpanderId);
+        borderDictionary[fragment.border.close]['close'].push(fragment.toExpanderId);
     });
     return borderDictionary;
 }
