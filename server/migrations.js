@@ -18,6 +18,7 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "addTitle"});
 	}
+	/* removed since fragments are subobjects of expander which has id already
 	if (!Migrations.findOne({name: "addParentExpanderIdToFragment"})) {
 		Expanders.find().forEach(function (expander) {
 			_.each(expander.fragments, function (fragment) {
@@ -28,6 +29,18 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "addParentExpanderIdToFragment"});
 	}
+	 */
+	if (!Migrations.findOne({name: "removeParentExpanderIdFromFragment"})) {
+		Expanders.find().forEach(function (expander) {
+			_.each(expander.fragments, function (fragment) {
+				delete fragment.parentExpanderId;
+			});
+			Expanders.update(
+				expander._id, {$set: {fragments: expander.fragments}});
+		});
+		Migrations.insert({name: "removeParentExpanderIdFromFragment"});
+	}
+
 	if (!Migrations.findOne({name: 'addLastEditTime'})) {
 		Expanders.find().forEach(function (expander) {
 			if(!expander.lastEditTime) {

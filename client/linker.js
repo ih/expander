@@ -2,12 +2,11 @@ Template.expanderLinker.events({
 	'submit form': function (event, template) {
 		event.preventDefault();
 		var self = this;
-		var targetExpanderId = template.find('input').value;
+		var toExpanderId = template.find('input').value;
 		Meteor.call('linkExpanders', {
 			fragment: {
 				border: self.border,
-				id: targetExpanderId,
-				parentExpanderId: self.parent._id
+				id: toExpanderId
 			},
 			fragmentContent: self.selectionString
 		}, function (error, response) {

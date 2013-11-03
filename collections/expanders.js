@@ -11,7 +11,6 @@ Expanders = new Meteor.Collection('expanders');
 			close: 20
 		},
 		id: 'expander123'
-		parentExpanderId: 'expander456'
 	}],
 	parentFragment: 'from the parent'
 	creationTime: 12345,
@@ -180,9 +179,9 @@ Meteor.methods ({
 	 *}
 	 */
 	linkExpanders: function (clientData) {
-		var targetExpander = Expanders.findOne(
-			clientData.fragment.targetExpanderId);
-		if (targetExpander === undefined) {
+		var toExpander = Expanders.findOne(
+			clientData.fragment.toExpanderId);
+		if (toExpander === undefined) {
 			throw Meteor.Error(404, 'no target expander');
 		}
 
@@ -192,7 +191,7 @@ Meteor.methods ({
 			{$push: {fragments: clientData.fragment}});
 
 		// adjust the parents of the target expander
-		targetExpander.parents[clientData.fragment.parentExpanderId] = {
+		toExpander.parents[clientData.fragment.parentExpanderId] = {
 			creationTime: new Date().getTime()
 		};
 	}
