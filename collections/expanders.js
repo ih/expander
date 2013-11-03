@@ -1,6 +1,23 @@
 // declared without var so accessible outside this file
 Expanders = new Meteor.Collection('expanders');
 
+/**
+{
+	title: 'A title',
+	content: 'The body of the expander',
+	fragments: [{
+		border: {
+			open: 13,
+			close: 20
+		},
+		id: 'expander123'
+		parentExpanderId: 'expander456'
+	}],
+	parentFragment: 'from the parent'
+	creationTime: 12345,
+}
+*/
+
 var ownsDocument = function(userId, doc) {
 	return doc && doc.userId === userId;
 };
@@ -15,7 +32,7 @@ Meteor.methods ({
     createExpander:  function (dataFromClient) {
 		var user = Meteor.user ();
 		if (!user) {
-			throw new Meteor.Error (401, 'You need to log in to create a new' + 
+			throw new Meteor.Error (401, 'You need to log in to create a new' +
 									'expander');
 		}
 	    // pick out the whitelisted keys
@@ -25,7 +42,7 @@ Meteor.methods ({
 	    // add additional data to the new expander
 		var additionalExpanderData = {
 			creatorId: user._id,
-			creationDate: new Date ().getTime (),
+			creationTime: new Date ().getTime (),
 			lastEditTime: new Date ().getTime (),
 			fragments: []
 		};
@@ -34,7 +51,7 @@ Meteor.methods ({
 		if (dataFromClient.fragment) {
 			var fragment = dataFromClient.fragment;
 			fragment.id = newExpanderId;
-			Expanders.update (expanderData.parent, 
+			Expanders.update (expanderData.parent,
 							  {$push: {fragments: fragment}});
 		}
     },
@@ -44,16 +61,16 @@ Meteor.methods ({
 		function removeAsFragment (updatedExpander) {
 			if (updatedExpander.parent !== undefined) {
 				// remove the expander corresponding to expanderId from its
-				// parent fragments 
+				// parent fragments
 				var parentExpander = Expanders.findOne (updatedExpander.parent);
 				function sameId (fragment) {
 					return fragment.id === updatedExpander._id;
 				};
 				parentExpander.fragments = _.reject (
 					parentExpander.fragments, sameId);
-				// can't update _id so pick out the fields that actally need 
+				// can't update _id so pick out the fields that actally need
 				// updating
-				Expanders.update (parentExpander._id, 
+				Expanders.update (parentExpander._id,
 								  {$set: _.omit (parentExpander, '_id')});
 				// remove information about the parent from the expander
 				updatedExpander.parentFragment = undefined;
@@ -61,13 +78,13 @@ Meteor.methods ({
 		}
 
 		function addAsFragment (updatedExpander, fragmentData) {
-			// create a fragment and add it to the new parent's fragment 
+			// create a fragment and add it to the new parent's fragment
 			// list
 			var newFragment = {
-				border: fragmentData.border, 
+				border: fragmentData.border,
 				id: updatedExpander._id
 			};
-			Expanders.update (fragmentData.parent._id, 
+			Expanders.update (fragmentData.parent._id,
 							  {$push: {fragments: newFragment}});
 			// update the parentFragment field in the expander
 			updatedExpander.parentFragment = fragmentData.selectionString;
@@ -75,10 +92,10 @@ Meteor.methods ({
 
 		function adjustIfFragmentsChanged(originalExpander, updatedExpander) {
 			function findChangedFragments(originalExpander, updatedExpander) {
-				/* 
+				/*
 				 * compares the old expander with the new to see if the
 				 * content of the fragments has changed
-				 * returns a changedFragmentData object for each changed 
+				 * returns a changedFragmentData object for each changed
 				 * fragment, which contains the fragment expander id along
 				 * with the changed content of that fragment
 				 */
@@ -138,7 +155,7 @@ Meteor.methods ({
 		var originalExpander = Expanders.findOne(updatedExpander._id);
 		adjustIfFragmentsChanged(originalExpander, updatedExpander);
 		updatedExpander.lastEditTime = new Date().getTime();
-		Expanders.update (updatedExpander._id, 
+		Expanders.update (updatedExpander._id,
 						  {$set: _.omit (updatedExpander, '_id')});
     },
 	deleteExpander: function (dataFromClient) {
@@ -155,5 +172,28 @@ Meteor.methods ({
 									   dataFromClient.expanderId);
 		}
 		Expanders.remove (dataFromClient.expanderId);
+	},
+	/**
+	 * dataFromClient:
+	 * {
+	 *
+	 *}
+	 */
+	linkExpanders: function (clientData) {
+		var targetExpander = Expanders.findOne(
+			clientData.fragment.targetExpanderId);
+		if (targetExpander === undefined) {
+			throw Meteor.Error(404, 'no target expander');
+		}
+
+		// adjust the fragments of the source expander
+		Expanders.update(
+			clientData.fragment.parentExpanderId,
+			{$push: {fragments: clientData.fragment}});
+
+		// adjust the parents of the target expander
+		targetExpander.parents[clientData.fragment.parentExpanderId] = {
+			creationTime: new Date().getTime()
+		};
 	}
 });

@@ -20,7 +20,7 @@ Meteor.startup(function () {
 	}
 	if (!Migrations.findOne({name: "addParentExpanderIdToFragment"})) {
 		Expanders.find().forEach(function (expander) {
-			_.each(expander.fragments, function(fragment) {
+			_.each(expander.fragments, function (fragment) {
 				fragment.parentExpanderId = expander._id;
 			});
 			Expanders.update(
@@ -28,13 +28,29 @@ Meteor.startup(function () {
 		});
 		Migrations.insert({name: "addParentExpanderIdToFragment"});
 	}
-	if(!Migrations.findOne({name: 'lastEditTime'})) {
-		Expanders.find().forEach(function(expander) {
+	if (!Migrations.findOne({name: 'addLastEditTime'})) {
+		Expanders.find().forEach(function (expander) {
 			if(!expander.lastEditTime) {
 				var currentTime = new Date().getTime();
 				Expanders.update(
 					expander._id, {$set: {lastEditTime: currentTime}});
 			}
 		});
+		Migrations.insert({name: "addLastEditTime"});
+	}
+	if (!Migrations.findOne({name: 'renameCreationDate'})) {
+		Expanders.find().forEach(function (expander) {
+			if (_.has(expander, 'creationDate')) {
+				Expanders.update(
+					expander._id, {$rename: {'creationDate': 'creationTime'}});
+			}
+			else {
+				var currentTime = new Date().getTime();
+				Expanders.update(
+					expander._id, {$set: {'creationTime': currentTime}});
+			}
+		});
+		Migrations.insert({name: "renameCreationDate"});
 	}
 });
+

@@ -32,3 +32,17 @@ if args.command == 'local2remote':
     command = 'mongorestore -u client -h %s -d www_irvinote_com -p %s dump/meteor' % parameters
     print command
     subprocess.call(command, shell=True)
+
+elif args.command == 'backupremote':
+    #TODO delete dump/www_irvinote_com before copying
+    parameters = get_remote_parameters()
+    backup_command = 'mongodump -u client -h %s -d www_irvinote_com -p %s' % parameters
+    print backup_command
+    subprocess.call(backup_command, shell=True)
+
+
+elif args.command == 'remote2local':
+    #TODO meteor reset before restoring
+    command = 'mongorestore -h 127.0.0.1:3002 -d meteor dump/www_irvinote_com'
+    print command
+    subprocess.call(command, shell=True)
