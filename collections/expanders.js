@@ -37,7 +37,7 @@ Meteor.methods ({
 	    // pick out the whitelisted keys
 	    // TODO rename parent to parentId
 		var expanderData = _.pick (dataFromClient.newExpanderData,
-								   'parent', 'content', 'parentFragment', 'title');
+								   'fromExpanderIds', 'content', 'parentFragment', 'title');
 	    // add additional data to the new expander
 		var additionalExpanderData = {
 			creatorId: user._id,
@@ -50,31 +50,25 @@ Meteor.methods ({
 		if (dataFromClient.fragment) {
 			var fragment = dataFromClient.fragment;
 			fragment.toExpanderId = newExpanderId;
-			Expanders.update (expanderData.parent,
+			Expanders.update (expanderData.fromExpanderIds[0],
 							  {$push: {fragments: fragment}});
 		}
     },
     updateExpander: function (dataFromClient) {
 	    // this expanderData has updated content
 		var updatedExpander = dataFromClient.updatedExpander;
-		function removeAsFragment (updatedExpander) {
-			if (updatedExpander.parent !== undefined) {
-				// remove the expander corresponding to expanderId from its
-				// parent fragments
-				var parentExpander = Expanders.findOne (updatedExpander.parent);
-				function sameId (fragment) {
-					return fragment.toExpanderId === updatedExpander._id;
-				};
-				parentExpander.fragments = _.reject (
-					parentExpander.fragments, sameId);
-				// can't update _id so pick out the fields that actally need
-				// updating
-				Expanders.update (parentExpander._id,
-								  {$set: _.omit (parentExpander, '_id')});
-				// remove information about the parent from the expander
-				updatedExpander.parentFragment = undefined;
-			}
+	    // if there is fragmentData then we need to adjust the connections
+	    // to other expanders
+		if (dataFromClient.fragmentData !== undefined) {
+			addAsFragment (updatedExpander, dataFromClient.fragmentData);
 		}
+		// if the content has changed within a fragment adjust parentFragment
+		// for the expanders that corresponds to those fragments
+		var originalExpander = Expanders.findOne(updatedExpander._id);
+		adjustIfFragmentsChanged(originalExpander, updatedExpander);
+		updatedExpander.lastEditTime = new Date().getTime();
+		Expanders.update (updatedExpander._id,
+						  {$set: _.omit (updatedExpander, '_id')});
 
 		function addAsFragment (updatedExpander, fragmentData) {
 			// create a fragment and add it to the new parent's fragment
@@ -83,7 +77,7 @@ Meteor.methods ({
 				border: fragmentData.border,
 				toExpanderId: updatedExpander._id
 			};
-			Expanders.update (fragmentData.parent._id,
+			Expanders.update (fragmentData.fromExpander._id,
 							  {$push: {fragments: newFragment}});
 			// update the parentFragment field in the expander
 			updatedExpander.parentFragment = fragmentData.selectionString;
@@ -142,35 +136,26 @@ Meteor.methods ({
 				updateFragmentExpander(changedFragmentData);
 			});
 		}
-
-	    // if there is fragmentData then we need to adjust the connections
-	    // to other expanders
-		if (dataFromClient.fragmentData !== undefined) {
-			removeAsFragment (updatedExpander);
-			addAsFragment (updatedExpander, dataFromClient.fragmentData);
-		}
-		// if the content has changed within a fragment adjust parentFragment
-		// for the expanders that corresponds to those fragments
-		var originalExpander = Expanders.findOne(updatedExpander._id);
-		adjustIfFragmentsChanged(originalExpander, updatedExpander);
-		updatedExpander.lastEditTime = new Date().getTime();
-		Expanders.update (updatedExpander._id,
-						  {$set: _.omit (updatedExpander, '_id')});
     },
 	deleteExpander: function (dataFromClient) {
-		function removeFromParentFragments (parentId, expanderId) {
-			var parent = Expanders.findOne (parentId);
-			var targetFragment = _.find (parent.fragments, function (fragment) {
-				return fragment.toExpanderId === expanderId;
+		var targetExpander = dataFromClient.expander;
+		if (targetExpander.fromExpanderIds.length > 0) {
+ 			removeFromExpanderFragments (targetExpander);
+		}
+		Expanders.remove (targetExpander._id);
+		function removeFromExpanderFragments (expander) {
+			// replace with batch find in mongo?
+			_.each(expander.fromExpanderIds, function(fromExpanderId) {
+				var fromExpander = Expanders.findOne (fromExpanderId);
+				var targetFragments = _.filter(fromExpander.fragments, function (fragment) {
+					return fragment.toExpanderId === expander._id;
+				});
+				// TODO is there a way to do this without getting the parent first?
+				_.each(targetFragments, function (targetFragment) {
+					Expanders.update (fromExpanderId, {$pull: {fragments: targetFragment}});
+				});
 			});
-			// TODO is there a way to do this without getting the parent first?
-			Expanders.update (parentId, {$pull: {fragments: targetFragment}});
 		}
-		if (dataFromClient.parentId) {
- 			removeFromParentFragments (dataFromClient.parentId,
-									   dataFromClient.expanderId);
-		}
-		Expanders.remove (dataFromClient.expanderId);
 	},
 	/**
 	 * dataFromClient:

@@ -62,8 +62,7 @@ Template.expanderEditor.events({
 			Meteor.call (
 				'deleteExpander',
 				{
-					expanderId: editingExpander._id,
-					parentId: editingExpander.parent
+					expander: editingExpander
 				});
 			Session.set('editingExpander', undefined);
 		}

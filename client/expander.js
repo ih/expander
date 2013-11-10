@@ -102,7 +102,7 @@ Template.expander.events({
         if(selectedContent) {
             Session.set('showCreator', true);
             Session.set('fragmentData', {selectionString : selectedContent,
-                                         parent : this,
+                                         fromExpander : this,
                                          border : border});
         }
 		event.stopImmediatePropagation ();
@@ -213,7 +213,7 @@ Template.expander.events({
 		event.preventDefault ();
 		if (confirm ("Delete expander?")) {
 			Meteor.call ('deleteExpander',
-						 {expanderId: this._id, parentId: this.parent});
+						 {expander: this});
 		}
 		event.stopImmediatePropagation ();
 	}

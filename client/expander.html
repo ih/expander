@@ -8,8 +8,11 @@
 		{{#unless currentExpander}}
 		<button class="unexpand">close</button>
 		{{/unless}}
-		{{#if parent}}
-		<div>parent: <a href="/expanders/{{parent}}">back to {{getParentFragment parent}}</a></div>
+		{{#if fromExpanderIds}}
+		{{#each fromExpanderIds}}
+		<!--replace with getFragmentContent helper -->
+		<div>linked from: <a href="/expanders/{{this}}">this</a></div>
+		{{/each}}
 		{{/if}}
 		<button class="highlight-all-fragments">
 			Highlight All Fragments

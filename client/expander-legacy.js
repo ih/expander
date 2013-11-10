@@ -5,7 +5,7 @@
     };
 
 	Template.expanderKeys.getTopExpanders = function () {
-		return Expanders.find ({parent: undefined});
+		return Expanders.find({fromExpanderIds: []});
 	};
 
     Template.expanderSelector.events({
@@ -96,35 +96,35 @@
         return Expanders.findOne(self.toExpanderId) || {};
     };
 
-    Template.fragmentLegacy.events({
-        'change, keyup, blur .border': function(event) {
-            //TODO move this to utility library
-             function updateFragmentBorder(parentExpander, expanderId,
-                                           borderType, newValue) {
-                //modify the border of the fragment in question
-                _.each(parentExpander.fragments, function (fragment) {
-                    if(expanderId === self.toExpanderId) {
-                        fragment.border[borderType] = Number(newValue);
-                    }
-                });
-                Expanders.update(parentExpander._id,
-                                 {$set: {fragments: expander.fragments}});
-            }
-            self = this;
-            var expanderId = self.toExpanderid;
-            //TODO(irvin) better way to determine whether open/close border?
-            var newValue = $(event.currentTarget).val();
-            var expander = Expanders.findOne(self.toExpanderId);
-	    if (expander &&  expander.parent) {
-		var parentExpander = Expanders.findOne(expander.parent);
-		if(_.contains(event.currentTarget.classList, 'open')) {
-                    updateFragmentBorder(parentExpander, self.toExpanderId, 'open', newValue);
-		}
-		else {
-                    updateFragmentBorder(parentExpander, self.toExpanderId, 'close', newValue);
-		}
-	    }
-        }
-    });
+// Template.fragmentLegacy.events({
+//     'change, keyup, blur .border': function(event) {
+//         //TODO move this to utility library
+//         function updateFragmentBorder(parentExpander, expanderId,
+//                                       borderType, newValue) {
+//             //modify the border of the fragment in question
+//             _.each(parentExpander.fragments, function (fragment) {
+//                 if(expanderId === self.toExpanderId) {
+//                     fragment.border[borderType] = Number(newValue);
+//                 }
+//             });
+//             Expanders.update(parentExpander._id,
+//                              {$set: {fragments: expander.fragments}});
+//         }
+//         self = this;
+//         var expanderId = self.toExpanderid;
+//         //TODO(irvin) better way to determine whether open/close border?
+//         var newValue = $(event.currentTarget).val();
+//         var expander = Expanders.findOne(self.toExpanderId);
+// 	    if (expander &&  expander.parent) {
+// 			var parentExpander = Expanders.findOne(expander.parent);
+// 			if(_.contains(event.currentTarget.classList, 'open')) {
+//                 updateFragmentBorder(parentExpander, self.toExpanderId, 'open', newValue);
+// 			}
+// 			else {
+//                 updateFragmentBorder(parentExpander, self.toExpanderId, 'close', newValue);
+// 			}
+// 	    }
+//     }
+// });
     //***FRAGMENT END***//
 

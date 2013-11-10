@@ -6,18 +6,18 @@ Template.expanderCreator.events({
 	    // if there is no selection then create a new expander
 	var fragment = undefined;
 	var newExpanderData = {
-	    parent: undefined,
+	    fromExpanderIds: [],
 		title: template.find ('.title-input').value,
 	    content: template.find('textarea').value,
 	    parentFragment: undefined
 	};
 	    //if there is selection data then add it to the expander
-	if (self.parent) {
+	if (self.fromExpander) {
 	    fragment = {
 			border: self.border,
 			toExpanderid: undefined
 		};
-	    newExpanderData.parent = self.parent._id;
+	    newExpanderData.fromExpanderIds.push(self.fromExpander._id);
 	    newExpanderData.parentFragment = self.selectionString;
 	}
 
