@@ -6,9 +6,10 @@ Meteor.startup(function () {
 	if (!Migrations.findOne({name: "addTitle"})) {
 		Expanders.find().forEach(function (expander) {
 			if (!expander.title) {
-				if (expander.parent) {
+				if (expander.fromExpanderIds.length > 0) {
 					Expanders.update(
-						expander._id, {$set: {title: expander.parentFragment}});
+						expander._id, {$set: {title: getFragmentContent(
+							expander.fromExpanderIds[0], expander._id)}});
 				}
 				else {
 					Expanders.update(
@@ -86,5 +87,14 @@ Meteor.startup(function () {
 			});
 		});
 		Migrations.insert({name: "parentToFromExpanderIds"});
+	}
+
+	if (!Migrations.findOne({name: 'removeParentFragment'})) {
+		Expanders.find().forEach(function (expander) {
+			Expanders.update(expander._id, {
+				$unset: {'parentFragment': ''}
+			});
+		});
+		Migrations.insert({name: "removeParentFragment"});
 	}
 });

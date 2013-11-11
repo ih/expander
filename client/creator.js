@@ -8,8 +8,7 @@ Template.expanderCreator.events({
 	var newExpanderData = {
 	    fromExpanderIds: [],
 		title: template.find ('.title-input').value,
-	    content: template.find('textarea').value,
-	    parentFragment: undefined
+	    content: template.find('textarea').value
 	};
 	    //if there is selection data then add it to the expander
 	if (self.fromExpander) {
@@ -18,7 +17,6 @@ Template.expanderCreator.events({
 			toExpanderid: undefined
 		};
 	    newExpanderData.fromExpanderIds.push(self.fromExpander._id);
-	    newExpanderData.parentFragment = self.selectionString;
 	}
 
         //create a new expander

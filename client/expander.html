@@ -11,7 +11,7 @@
 		{{#if fromExpanderIds}}
 		{{#each fromExpanderIds}}
 		<!--replace with getFragmentContent helper -->
-		<div>linked from: <a href="/expanders/{{this}}">this</a></div>
+		<div>linked from: <a href="/expanders/{{this}}">{{getTitle this}}</a></div>
 		{{/each}}
 		{{/if}}
 		<button class="highlight-all-fragments">

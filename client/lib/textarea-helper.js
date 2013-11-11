@@ -5,19 +5,19 @@
     , dataKey      = 'textarea-helper'
 
     // Styles that could influence size of the mirrored element.
-    , mirrorStyles = [ 
+    , mirrorStyles = [
                        // Box Styles.
                        'box-sizing', 'height', 'width', 'padding-bottom'
                      , 'padding-left', 'padding-right', 'padding-top'
-  
+
                        // Font stuff.
-                     , 'font-family', 'font-size', 'font-style' 
+                     , 'font-family', 'font-size', 'font-style'
                      , 'font-variant', 'font-weight'
-  
+
                        // Spacing etc.
                      , 'word-spacing', 'letter-spacing', 'line-height'
-                     , 'text-decoration', 'text-indent', 'text-transform' 
-                     
+                     , 'text-decoration', 'text-indent', 'text-transform'
+
                       // The direction.
                      , 'direction'
                      ];
@@ -43,7 +43,7 @@
         styles[style] = this.$text.css(style);
       }
       this.$mirror.css(styles).empty();
-      
+
       // Update content and insert caret.
       var caretPos = this.getOriginalCaretPos()
         , str      = this.$text.val()
@@ -95,12 +95,12 @@
         re.moveToBookmark(r.getBookmark());
         rc.setEndPoint('EndToStart', re);
         return rc.text.length;
-      } 
+      }
       return 0;
     };
 
   }).call(TextareaHelper.prototype);
-  
+
   $.fn.textareaHelper = function (method) {
     this.each(function () {
       var $this    = $(this)
