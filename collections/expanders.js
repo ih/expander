@@ -114,12 +114,13 @@ Meteor.methods ({
 
 		// adjust the fragments of the source expander
 		Expanders.update(
-			clientData.fragment.parentExpanderId,
+			clientData.fromExpanderId,
 			{$push: {fragments: clientData.fragment}});
 
 		// adjust the parents of the target expander
-		toExpander.parents[clientData.fragment.parentExpanderId] = {
-			creationTime: new Date().getTime()
-		};
+		toExpander.fromExpanderIds.push(clientData.fromExpanderId);
+		Expanders.update(
+			clientData.fragment.toExpanderId,
+			{$push: {fromExpanderIds: clientData.fromExpanderId}});
 	}
 });

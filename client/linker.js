@@ -6,9 +6,9 @@ Template.expanderLinker.events({
 		Meteor.call('linkExpanders', {
 			fragment: {
 				border: self.border,
-				id: toExpanderId
+				toExpanderId: toExpanderId
 			},
-			fragmentContent: self.selectionString
+			fromExpanderId: self.fromExpander._id
 		}, function (error, response) {
 			if (error) {
 				console.log(error.reason);
